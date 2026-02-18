@@ -754,64 +754,6 @@
     ]
   },
   {
-    "skillID": "learned_1771372378728",
-    "description": "Learned response to: \"he\"",
-    "trigger_intent": [
-      "he"
-    ],
-    "steps": [
-      {
-        "type": "primitive",
-        "action": "log_output",
-        "params": {
-          "message": "hlelo"
-        }
-      }
-    ],
-    "cachedVectors": [
-      {
-        "text": "he",
-        "vector": {
-          "type": "Buffer",
-          "data": [
-            4,
-            16,
-            2,
-            1,
-            9,
-            25,
-            2,
-            50,
-            0,
-            20,
-            38,
-            33,
-            48,
-            8,
-            25,
-            177,
-            34,
-            216,
-            64,
-            102,
-            65,
-            13,
-            66,
-            39,
-            2,
-            70,
-            129,
-            0,
-            192,
-            9,
-            54,
-            209
-          ]
-        }
-      }
-    ]
-  },
-  {
     "skillID": "learned_1771372411664",
     "description": "Learned response to: \"tell jo\"",
     "trigger_intent": [
@@ -2102,9 +2044,10 @@
     "steps": [
       {
         "type": "primitive",
-        "action": "log_output",
+        "action": "adjust_reward",
         "params": {
-          "message": "Thank you. I aim to perform optimally."
+          "value": 1,
+          "confirm": "Thank you. I aim to perform optimally."
         }
       }
     ],
@@ -3300,5 +3243,218 @@
       }
     ],
     "cachedVectors": []
+  },
+  {
+    "skillID": "auto_1771383869344",
+    "description": "Automated sequence for Alpha Beta tests.",
+    "trigger_intent": [
+      "alpha beta gamma"
+    ],
+    "steps": [
+      {
+        "type": "skill",
+        "name": "meta_learn_fact"
+      },
+      {
+        "type": "skill",
+        "name": "meta_feedback_positive"
+      }
+    ],
+    "is_automated": true
+  },
+  {
+    "skillID": "auto_1771384377339",
+    "description": "Automated sequence following: \"Sentra is a philosopher.\"",
+    "trigger_intent": [
+      "sentra is a philosopher."
+    ],
+    "steps": [
+      {
+        "type": "skill",
+        "name": "meta_learn_fact"
+      },
+      {
+        "type": "skill",
+        "name": "meta_feedback_positive"
+      }
+    ],
+    "is_automated": true
+  },
+  {
+    "skillID": "auto_1771426964881",
+    "description": "Automated sequence following: \"record this\"",
+    "trigger_intent": [
+      "record this"
+    ],
+    "parameters": {
+      "path": "sentra_notes.txt",
+      "content": "New note from Sentra.",
+      "append": true
+    },
+    "steps": [
+      {
+        "type": "skill",
+        "name": "skill_note"
+      },
+      {
+        "type": "skill",
+        "name": "meta_feedback_positive"
+      }
+    ],
+    "is_automated": true
+  },
+  {
+    "skillID": "auto_1771427311216",
+    "description": "Test Habit",
+    "trigger_intent": [
+      "record this"
+    ],
+    "parameters": {
+      "path": "verify_note.txt",
+      "content": "Fix verified!",
+      "append": false
+    },
+    "steps": [
+      {
+        "type": "skill",
+        "name": "skill_note"
+      }
+    ],
+    "is_automated": true
+  },
+  {
+    "skillID": "auto_1771427397968",
+    "description": "Test Habit",
+    "trigger_intent": [
+      "record this"
+    ],
+    "parameters": {
+      "path": "verify_note.txt",
+      "content": "Fix verified!",
+      "append": false
+    },
+    "steps": [
+      {
+        "type": "skill",
+        "name": "skill_note"
+      }
+    ],
+    "is_automated": true
+  },
+  {
+    "skillID": "auto_1771429399058",
+    "description": "Automated sequence following: \"check files\"",
+    "trigger_intent": [
+      "check files"
+    ],
+    "parameters": {
+      "command": "dir"
+    },
+    "steps": [
+      {
+        "type": "skill",
+        "name": "skill_files"
+      },
+      {
+        "type": "skill",
+        "name": "learned_bootstrap_1771373708184_201"
+      }
+    ],
+    "is_automated": true
+  },
+  {
+    "skillID": "auto_1771431487928",
+    "description": "Automated sequence following: \"what is a quark?\"",
+    "trigger_intent": [
+      "what is a quark?"
+    ],
+    "parameters": {},
+    "steps": [
+      {
+        "type": "skill",
+        "name": "meta_query_fact"
+      },
+      {
+        "type": "skill",
+        "name": "learned_bootstrap_1771373708184_201"
+      }
+    ],
+    "is_automated": true
+  },
+  {
+    "skillID": "auto_1771432106231",
+    "description": "Automated sequence following: \"What is DNA?\"",
+    "trigger_intent": [
+      "what is dna?"
+    ],
+    "parameters": {},
+    "steps": [
+      {
+        "type": "skill",
+        "name": "meta_query_fact"
+      },
+      {
+        "type": "skill",
+        "name": "meta_feedback_positive"
+      }
+    ],
+    "is_automated": true
+  },
+  {
+    "skillID": "auto_1771433000639",
+    "description": "Automated sequence following: \"What is a fish?\"",
+    "trigger_intent": [
+      "what is a fish?"
+    ],
+    "parameters": {},
+    "steps": [
+      {
+        "type": "skill",
+        "name": "meta_query_fact"
+      },
+      {
+        "type": "skill",
+        "name": "meta_feedback_positive"
+      }
+    ],
+    "is_automated": true
+  },
+  {
+    "skillID": "auto_1771433127004",
+    "description": "Automated sequence following: \"what is dna?\"",
+    "trigger_intent": [
+      "what is dna?"
+    ],
+    "parameters": {},
+    "steps": [
+      {
+        "type": "skill",
+        "name": "meta_query_fact"
+      },
+      {
+        "type": "skill",
+        "name": "meta_feedback_positive"
+      }
+    ],
+    "is_automated": true
+  },
+  {
+    "skillID": "auto_1771433325110",
+    "description": "Automated sequence following: \"What is Sentra?\"",
+    "trigger_intent": [
+      "what is sentra?"
+    ],
+    "parameters": {},
+    "steps": [
+      {
+        "type": "skill",
+        "name": "meta_query_fact"
+      },
+      {
+        "type": "skill",
+        "name": "meta_feedback_positive"
+      }
+    ],
+    "is_automated": true
   }
 ]

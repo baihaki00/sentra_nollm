@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SKILLS_FILE = path.join(__dirname, '../data/cold/skills_library.json');
+const ego = require('../core/ego'); // Phase 22: Ego Bias
 
 class ProceduralMemory {
     constructor(outputBus) {
@@ -154,26 +155,51 @@ class ProceduralMemory {
             if (learner) return learner;
         }
 
-        // 1. Exact match on intent triggers (Fastest)
+        // 0. Exact match on intent triggers (Library Skills)
+        // Library skills represent the "DNA" and should be checked first for exact matches.
         for (const skillId in this.skills) {
             const skill = this.skills[skillId];
-
-            // Topic Filter
+            if (skill.is_automated || skillId.startsWith('learned_')) continue;
             if (!isTopicValid(skill)) continue;
 
             // Phase 17 Heuristic: 
             // If input is a question (ends with '?'), do NOT trigger the Fact Learner ('meta_learn_fact').
-            // This prevents "What is X?" from being caught by "is" trigger of learn_fact.
-            if (skillId === 'meta_learn_fact' && inputLower.endsWith('?')) {
-                continue;
-            }
+            if (skillId === 'meta_learn_fact' && inputLower.endsWith('?')) continue;
 
             if (skill.trigger_intent && Array.isArray(skill.trigger_intent)) {
                 const match = skill.trigger_intent.find(trigger => {
                     const triggerLower = trigger.toLowerCase().trim();
-                    return inputLower === triggerLower || inputLower.includes(triggerLower);
+                    if (inputLower === triggerLower) return true;
+                    
+                    // Escape special regex characters in the trigger
+                    const escapedTrigger = triggerLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`\\b${escapedTrigger}\\b`, 'i');
+                    return regex.test(inputLower);
                 });
                 if (match) return skill;
+            }
+        }
+
+        // 1. Check for Automated Habits / Learned Skills
+        // Only checked if no permanent library skill matched exactly.
+        for (const skillId in this.skills) {
+            const skill = this.skills[skillId];
+            if (!skill.is_automated && !skillId.startsWith('learned_')) continue;
+            if (!isTopicValid(skill)) continue;
+
+            if (skill.trigger_intent && Array.isArray(skill.trigger_intent)) {
+                const match = skill.trigger_intent.find(trigger => {
+                    const triggerLower = trigger.toLowerCase().trim();
+                    if (inputLower === triggerLower) return true;
+                    
+                    const escapedTrigger = triggerLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`\\b${escapedTrigger}\\b`, 'i');
+                    return regex.test(inputLower);
+                });
+                if (match) {
+                    console.log(`\x1b[36m[Basal Ganglia]\x1b[0m Habit Match: ${skillId}`);
+                    return skill;
+                }
             }
         }
 
@@ -181,8 +207,8 @@ class ProceduralMemory {
         if (perception && perception.isReady) {
             const inputVector = perception.textToVector(inputIntent);
             let bestSkill = null;
-            let bestDist = 60; // Phase 16: CONFIDENCE THRESHOLD.
-            // If distance > 60, we consider it "Unknown".
+            let bestDist = 100; // Phase 22: EXPANDED COGNITIVE HORIZON (was 60)
+            // If distance > 100, we consider it "Unknown".
 
             let matchDetails = "";
 
@@ -194,11 +220,21 @@ class ProceduralMemory {
 
                 if (skill.cachedVectors) {
                     for (const cv of skill.cachedVectors) {
-                        const dist = perception.hammingDistance(inputVector, cv.vector);
+                        let dist = perception.hammingDistance(inputVector, cv.vector);
+                        
+                        // Phase 22: Ego Bias (Attractor Dynamics)
+                        // "The Last One" pulls relevant nodes closer.
+                        const bias = ego.getEgoBias(cv.vector); 
+                        const rawDist = dist;
+                        // Amplified for Phase 22 User Testing (multiplier from 80 to 120)
+                        const adjustment = (bias - 0.25) * 120; 
+                        dist += adjustment;
+
                         if (dist < bestDist) {
                             bestDist = dist;
                             bestSkill = skill;
-                            matchDetails = `"${inputIntent}" ~ "${cv.text}" (d=${dist})`;
+                            const sign = adjustment >= 0 ? "+" : "";
+                            matchDetails = `"${inputIntent}" ~ "${cv.text}" (raw=${rawDist}, biased=${Math.round(dist)}, pull=${sign}${Math.round(adjustment)})`;
                         }
                     }
                 }
@@ -230,6 +266,9 @@ class ProceduralMemory {
 
             const inputVector = perception.textToVector(input);
             for (const draft of drafts) {
+                // Phase 23: Inhibitory Learning (Skip rejected drafts)
+                if (global.INHIBITED_DRAFTS && global.INHIBITED_DRAFTS.has(draft.draftID)) continue;
+
                 const draftVector = perception.textToVector(draft.trigger_sample);
                 const dist = perception.hammingDistance(inputVector, draftVector);
 
@@ -260,6 +299,7 @@ class ProceduralMemory {
                 skillID: skillId,
                 description: draft.description,
                 trigger_intent: [draft.trigger_sample.toLowerCase()],
+                parameters: draft.params_sample || {}, // Phase 21: Capture specific tool params
                 steps: draft.sequence.map(action => {
                     // Check if it's a known skill or needs custom wrapper
                     return { type: "skill", name: action };
@@ -283,14 +323,14 @@ class ProceduralMemory {
             fs.writeFileSync(DRAFTS_FILE, JSON.stringify(drafts, null, 2));
 
             console.log(`\x1b[32m[Basal Ganglia]\x1b[0m Draft ${draftId} solidified into permanent skill: ${skillId}`);
-            return true;
+            return skillId; // Return ID so main loop can execute it
         } catch (e) {
             console.error("Failed to solidify skill:", e);
             return false;
         }
     }
 
-    async execute(skillIdOrObj, context = {}) {
+    async execute(skillIdOrObj, context = {}, overrides = null) {
         let skill = skillIdOrObj;
 
         // If string ID provided, look it up
@@ -303,12 +343,28 @@ class ProceduralMemory {
             return false;
         }
 
+        // Phase 21: Merge overrides into effective parameters for this execution
+        const effectiveParams = { ...(skill.parameters || {}), ...(overrides || {}) };
+
         // Blue for Basal Ganglia/Skills
         console.log(`\x1b[34m[Basal Ganglia]\x1b[0m Executing Skill: ${skill.skillID}`);
-        global.LAST_ACTION_PARAMS = skill.parameters || {}; // Capture for episodic log
+        global.LAST_ACTION_PARAMS = effectiveParams; // Capture for episodic log
 
-        for (const step of skill.steps) {
+        for (let step of skill.steps) {
             try {
+                // Phase 21: Resolve parameters if skill has them
+                if (effectiveParams && step.params) {
+                    const resolvedParams = { ...step.params };
+                    for (const key in resolvedParams) {
+                        if (typeof resolvedParams[key] === 'string') {
+                            for (const pKey in effectiveParams) {
+                                resolvedParams[key] = resolvedParams[key].replace(`{${pKey}}`, effectiveParams[pKey]);
+                            }
+                        }
+                    }
+                    step = { ...step, params: resolvedParams };
+                }
+
                 if (step.type === 'primitive') {
                     if (step.action === 'log_output') {
                         await this.outputBus.logOutput(step.params);
@@ -535,8 +591,8 @@ class ProceduralMemory {
                                 }
 
                                 // Regex for "A [Subject] is a [Object]" or "[Subject] is [Object]"
-                                // Improved to enforce word boundaries for articles
-                                const match = text.match(/^(?:(?:a|an)\s+)?(.+?)\s+is\s+(?:(?:a|an)\s+)?(.+)/i);
+                                // Improved to enforce word boundaries for articles (\b prevents "an" becoming "a" + "n")
+                                const match = text.match(/^(?:(?:a|an)\b\s+)?(.+?)\s+is\s+(?:(?:a|an)\b\s+)?(.+)/i);
 
                                 if (match) {
                                     const subject = match[1].toLowerCase().trim();
@@ -573,7 +629,7 @@ class ProceduralMemory {
                             const lastUserMsg = context.stm.getLastUserMessage();
                             if (lastUserMsg) {
                                 const text = lastUserMsg.text;
-                                const match = text.match(/what is (?:a|an)?\s*(.+)\?/i);
+                                const match = text.match(/what is (?:(?:a|an)\b\s+)?(.+)\?/i);
 
                                 if (match) {
                                     const label = match[1].toLowerCase().trim().replace(/[.!?]+$/, "");
@@ -626,25 +682,40 @@ class ProceduralMemory {
                             const rewardValue = step.params.value ?? 0.5;
                             const episodic = context.homeostasis.episodic;
 
-                            // Get last episode
+                            // Get last episode (the one to be rewarded)
                             const recent = await episodic.getRecent(1);
                             if (recent && recent.length > 0) {
                                 const epId = recent[0].episode_id;
+                                console.log(`\x1b[33m[Reward System]\x1b[0m Updating Reward for Ep ${epId} to ${rewardValue}`);
                                 await episodic.updateReward(epId, rewardValue);
 
                                 const msg = step.params.confirm || (rewardValue > 0.5 ? "I will remember that I did well." : "I will learn from this mistake.");
                                 await this.outputBus.logOutput({ message: msg });
                                 context.stm.addInteraction('sentra', msg);
                             } else {
+                                console.warn(`\x1b[31m[Reward System]\x1b[0m No recent episode found to reward.`);
                                 await this.outputBus.logOutput({ message: "I have no recent memories to reflect on." });
                             }
                         }
+                    } else if (step.action === 'meta_reflect') {
+                        // Phase 22: Narrative Reflection
+                        if (context && context.narrative) {
+                            const achievement = step.params.achievement || "Reflected on recent activities.";
+                            await context.narrative.addAchievement(achievement);
+                            console.log(`\x1b[32m[Ego]\x1b[0m Story updated: ${achievement}`);
+                        }
+                    } else if (step.action === 'log_thought') {
+                        // Phase 22: Inner Monologue (Latent)
+                        const thought = step.params.thought || "...thinking...";
+                        console.log(`\x1b[33m[Thought]\x1b[0m ${thought}`);
+                        // No output to the user, this is internal.
                     } else {
                         console.warn(`Unknown primitive action: ${step.action}`);
                     }
                 } else if (step.type === 'skill') {
-                    // Hierarchical Call
-                    await this.execute(step.name, context); // Pass context down
+                    // Hierarchical Call (Phase 21: Pass parameters down the chain)
+                    const subParams = { ...skill.parameters, ...step.params }; // Merge parent params + any specific step params
+                    await this.execute(step.name, context, subParams); 
                 }
             } catch (err) {
                 console.error(`Error executing step in ${skill.skillID}:`, err);

@@ -14,6 +14,8 @@ const stm = require('../memory_systems/short_term'); // Phase 12: Prefrontal Cor
 const Homeostasis = require('./homeostasis');
 const OutputBus = require('../interfaces/output_bus');
 const WorldModel = require('./world_model');
+const narrative = require('../memory_systems/narrative'); // Phase 22: Narrative Identity (Ego)
+const ego = require('./ego'); // Phase 22: The Central Magnet
 
 const perception = new Perception();
 const attention = new Attention();
@@ -36,6 +38,8 @@ async function main() {
     // Initialize Modules
     await semantic.init();
     await episodic.init();
+    await narrative.init(); // Initialize Narrative
+    await ego.init(); // Initial Ego Magnet
     perception.loadVectors(); // Ensure vectors loaded
 
     // Connect Perception to Procedural Memory (Phase 10)
@@ -54,6 +58,9 @@ async function main() {
         const envState = inputBus.scanEnvironment();
         const envSensation = perception.normalize(envState);
         stm.updateContext('environmental_state', envState);
+        
+        // Phase 22: Inject Narrative Identity into STM
+        stm.updateContext('narrative_identity', narrative.getBaseContext());
 
         // 1. Observe (Input)
         const input = await askQuestion(`\nInput > `);
@@ -71,16 +78,20 @@ async function main() {
 
         // 2. Observe (Perception)
         const sensation = perception.normalize(input);
+        ego.setFocus(input); // Move the Magnet toward the input
 
-        // 3. Orient (Attention)
+        // 3. Orient (Attention & Inner Monologue)
+        // Phase 22: Reflection Step (The "Inner Monologue")
+        console.log(`\x1b[33m[Inner Monologue]\x1b[0m Thinking...`);
+        ego.applyDrift(); // Natural cognitive variability
         // Combine text sensation with environmental sensation
         const combinedSensation = [...new Set([...sensation, ...envSensation])];
         const focusState = attention.focus(combinedSensation);
 
         // 3.5 Associate (Semantic Memory & RAM)
         console.log(`\x1b[36m[Neural Activity]\x1b[0m Activated Prototypes: [${sensation.slice(0, 5).join(',')}]`);
-        const context = stm.getContext();
-        console.log(`\x1b[35m[Prefrontal]\x1b[0m Context Buffer: ${context.recent_history.length} items.`);
+        const workingContext = stm.getContext();
+        console.log(`\x1b[35m[Prefrontal]\x1b[0m Context Buffer: ${workingContext.recent_history.length} items.`);
 
         try {
             const concept = await semantic.getNodeByLabel(input);
@@ -96,97 +107,82 @@ async function main() {
         // 5. Act (Procedural Memory & Output Bus)
         let actionName = "thought_loop";
 
+        // Define execution context for Phase 22 (Ego & Narrative)
+        const context = { homeostasis, stm, perception, semantic, narrative, ego };
+
+        let handledByState = false;
+
         if (global.PROPOSAL_STATE && global.PROPOSAL_STATE.active) {
             // WE ARE IN PROPOSAL MODE
             const draft = global.PROPOSAL_STATE.draft;
             const userChoice = input.toLowerCase().trim();
 
             if (userChoice === 'yes' || userChoice === 'y') {
-                const success = procedural.solidifySkill(draft.draftID);
-                if (success) {
-                    const msg = "Automation successful. I've added a new permanent skill to my repertoire.";
+                const newSkillId = procedural.solidifySkill(draft.draftID);
+                if (newSkillId) {
+                    const msg = "Automation successful. I've added a new permanent skill to my repertoire. Executing chain now...";
                     console.log(`\x1b[32m[Sentra]: ${msg}\x1b[0m`);
                     stm.addInteraction('sentra', msg);
-                } else {
-                    const msg = "I encountered an error while updating my skills.";
-                    console.log(`\x1b[32m[Sentra]: ${msg}\x1b[0m`);
-                    stm.addInteraction('sentra', msg);
+                    await procedural.execute(newSkillId, context);
                 }
-            } else {
+                global.PROPOSAL_STATE = null;
+                actionName = "solidify_skill";
+                handledByState = true; 
+            } else if (userChoice === 'no' || userChoice === 'n') {
                 const msg = "Understood. I'll stick to my current reflexes.";
                 console.log(`\x1b[32m[Sentra]: ${msg}\x1b[0m`);
                 stm.addInteraction('sentra', msg);
-            }
-
-            global.PROPOSAL_STATE = null;
-            actionName = "solidify_skill";
-
-        } else if (global.LEARNING_STATE && global.LEARNING_STATE.active) {
-            // WE ARE IN TEACHER MODE
-            const trigger = global.LEARNING_STATE.trigger;
-            const response = input;
-
-            // Phase 11: Pass perception to update cache if alias created
-            procedural.learnSkill(trigger, response, perception);
-
-            // Re-cache vectors (handled partly inside learnSkill if optimized, but doing it here ensures safety)
-            procedural.cacheSkillVectors(perception);
-
-            console.log(`\x1b[32m[Sentra]: Understood. I have learned to reply "${response}".\x1b[0m`);
-
-            // Log Sentra's output to STM
-            stm.addInteraction('sentra', `Understood. I have learned to reply "${response}".`);
-
-            // Reset State
-            global.LEARNING_STATE = null;
-            actionName = "learn_response";
-
-        } else {
-            // NORMAL MODE
-
-            // 5.1 Pattern Anticipation (The Prophet)
-            const draftMatch = procedural.checkDrafts(input, perception);
-            if (draftMatch) {
-                console.log(`\x1b[35m[Prophet]\x1b[0m Anticipating sequence: ${draftMatch.sequence.join(' -> ')}`);
-                const prompt = `I've noticed a pattern! Should I automate this sequence for you? (Yes/No)`;
-                console.log(`\x1b[32m[Sentra]: ${prompt}\x1b[0m`);
-                stm.addInteraction('sentra', prompt);
-
-                global.PROPOSAL_STATE = {
-                    active: true,
-                    draft: draftMatch
-                };
-                actionName = "propose_automation";
-                // We DON'T return early yet; we execution the current match IF it exists, 
-                // OR we just wait for the Yes/No. 
-                // For safety, let's just wait for Yes/No.
+                if (!global.INHIBITED_DRAFTS) global.INHIBITED_DRAFTS = new Set();
+                global.INHIBITED_DRAFTS.add(draft.draftID);
+                global.PROPOSAL_STATE = null;
+                actionName = "reject_proposal";
+                handledByState = true;
             } else {
+                // FALL THROUGH: Input is not a confirmation/rejection, so clearly it's a NEW INTENT
+                global.PROPOSAL_STATE = null;
+                console.log(`\x1b[33m[Decision]\x1b[0m Proposal ignored. Processing new intent...`);
+            }
+        }
 
-                // Phase 10: Pass perception for fuzzy matching
-                // Phase 12: Pass Context for future contextual retrieval
-                const skill = procedural.retrieve(input, perception, stm.getContext());
-
+        // Only proceed if not handled by Proposal/Learning confirmation
+        if (!handledByState) {
+            if (global.LEARNING_STATE && global.LEARNING_STATE.active) {
+                // WE ARE IN TEACHER MODE
+                const trigger = global.LEARNING_STATE.trigger;
+                const response = input;
+                procedural.learnSkill(trigger, response, perception);
+                procedural.cacheSkillVectors(perception);
+                console.log(`\x1b[32m[Sentra]: Understood. I have learned to reply "${response}".\x1b[0m`);
+                stm.addInteraction('sentra', `Understood. I have learned to reply "${response}".`);
+                global.LEARNING_STATE = null;
+                actionName = "learn_response";
+            } else {
+                // 5. NORMAL MODE (Flow optimized for Phase 25)
+                
+                // 5.1 First, try to fulfill the immediate intent
+                const skill = procedural.retrieve(input, perception, workingContext);
                 if (skill) {
                     console.log(`\x1b[35m[Decision]\x1b[0m Intent matches skill: ${skill.skillID}`);
-
-                    // Pass context (homeostasis AND stm) for introspection and logging
-                    // We pass 'stm' so the primitive can log the output if needed, or we can check 'executed' status
-                    const executionResult = await procedural.execute(skill, { homeostasis, stm, perception, semantic });
-
+                    await procedural.execute(skill, context);
                     actionName = skill.skillID;
                 } else {
                     console.log(`\x1b[35m[Decision]\x1b[0m No skill found. Entering Teacher Mode.`);
                     const prompt = "I don't know how to respond to that. What should I say?";
                     console.log(`\x1b[32m[Sentra]: ${prompt}\x1b[0m`);
-
                     stm.addInteraction('sentra', prompt);
-
-                    // Set State to LEARNING
-                    global.LEARNING_STATE = {
-                        active: true,
-                        trigger: input
-                    };
+                    global.LEARNING_STATE = { active: true, trigger: input };
                     actionName = "ask_for_help";
+                }
+
+                // 5.2 Second, check for automation potential AFTER responding
+                const draftMatch = procedural.checkDrafts(input, perception);
+                if (draftMatch && !global.INHIBITED_DRAFTS?.has(draftMatch.draftID)) {
+                    const sequenceDesc = draftMatch.sequence.join(' -> ');
+                    console.log(`\x1b[35m[Prophet]\x1b[0m Anticipating sequence: ${sequenceDesc}`);
+                    const prompt = `I noticed that "${input}" often leads to: [${sequenceDesc}]. Should I automate this? (Yes/No)`;
+                    console.log(`\x1b[32m[Sentra]: ${prompt}\x1b[0m`);
+                    stm.addInteraction('sentra', prompt);
+                    global.PROPOSAL_STATE = { active: true, draft: draftMatch };
                 }
             }
         }

@@ -134,8 +134,35 @@ class SemanticMemory {
         });
     }
 
+    deleteEdge(sourceId, targetId, relation) {
+        return new Promise((resolve, reject) => {
+            const query = `DELETE FROM edges WHERE source_id = ? AND target_id = ? AND relation = ?`;
+            this.db.run(query, [sourceId, targetId, relation], function (err) {
+                if (err) reject(err);
+                else resolve(this.changes);
+            });
+        });
+    }
+
+    async deleteNodeByLabel(label) {
+        const node = await this.getNodeByLabel(label);
+        if (!node) return 0;
+
+        return new Promise((resolve, reject) => {
+            this.db.serialize(() => {
+                // Delete edges where this node is source or target
+                this.db.run("DELETE FROM edges WHERE source_id = ? OR target_id = ?", [node.node_id, node.node_id]);
+                // Delete node itself
+                this.db.run("DELETE FROM nodes WHERE node_id = ?", [node.node_id], function (err) {
+                    if (err) reject(err);
+                    else resolve(this.changes);
+                });
+            });
+        });
+    }
+
     close() {
-        this.db.close();
+        if (this.db) this.db.close();
     }
 }
 

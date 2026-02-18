@@ -27,6 +27,7 @@ class Perception {
                 return;
             }
             const buffer = fs.readFileSync(VECTOR_FILE);
+            this.prototypes = []; // Reset to avoid duplication on re-load
 
             // Validate Header
             const magic = buffer.toString('utf8', 0, 4);

@@ -58,7 +58,7 @@ async function sleep() {
             if (mistake.action_taken === 'meta_learn_fact' && mistake.raw_input) {
                 try {
                     // Reverse parse the fact: "A [Subject] is a [Object]"
-                    const match = mistake.raw_input.match(/^(?:(?:a|an)\s+)?(.+?)\s+is\s+(?:(?:a|an)\s+)?(.+)/i);
+                    const match = mistake.raw_input.match(/^(?:(?:a|an)\b\s+)?(.+?)\s+is\s+(?:(?:a|an)\b\s+)?(.+)/i);
                     if (match) {
                         const subject = match[1].toLowerCase().trim();
                         const objectRaw = match[2].toLowerCase().trim();
@@ -89,13 +89,21 @@ async function sleep() {
         drafts = JSON.parse(fs.readFileSync(draftSkillsPath, 'utf8'));
     }
 
-    // Look for successful chains (Minimum 2 steps ending in high reward)
+    // Look for successful chains (Minimum 2 steps ending in high reward or feedback)
     for (let i = 1; i < unconsolidated.length; i++) {
         const current = unconsolidated[i];
         const previous = unconsolidated[i - 1];
 
-        // A successful chain is: [Any Action (Rewarded 1.0)] -> [Positive Feedback]
-        if (previous.reward >= 1.0 && current.action_taken === 'meta_feedback_positive' && previous.raw_input) {
+        console.log(`  Checking chain: [${previous.action_taken} (Ep ${previous.episode_id})] -> [${current.action_taken} (Ep ${current.episode_id})] (Reward: ${previous.reward})`);
+
+        // A successful chain is: [Any Action (Rewarded >= 1.0)] -> [Positive Feedback Action]
+        // Phase 21 FIX: Check for generic feedback patterns or specific action names
+        const isFeedback = current.action_taken.includes('feedback_positive') || 
+                           current.action_taken.includes('reward') ||
+                           current.action_taken.includes('bootstrap') || // Catch-all for learned praise
+                           current.action_taken.includes('feedback');
+        
+        if (previous.reward >= 1.0 && isFeedback && previous.raw_input) {
             const patternID = `draft_${Date.now()}_${i}`;
             const params = previous.action_params ? JSON.parse(previous.action_params) : {};
             
@@ -111,8 +119,12 @@ async function sleep() {
             // Only add if it's a new unique trigger pattern (simplified)
             if (!drafts.some(d => d.trigger_sample === previous.raw_input)) {
                 drafts.push(newDraft);
-                console.log(`\x1b[32m[Pattern Discovery]\x1b[0m Detected successful chain! Drafting automation for: "${previous.raw_input}"`);
+                console.log(`\x1b[32m[Pattern Discovery]\x1b[0m SUCCESS! Detected successful chain! Drafting automation for: "${previous.raw_input}"`);
+            } else {
+                console.log(`\x1b[33m[Pattern Discovery]\x1b[0m Pattern already exists for: "${previous.raw_input}"`);
             }
+        } else if (previous.reward >= 1.0 && !isFeedback) {
+             console.log(`\x1b[90m[Pattern Discovery]\x1b[0m Trigger matched high reward, but second action [${current.action_taken}] is not a recognized feedback anchor.\x1b[0m`);
         }
     }
 

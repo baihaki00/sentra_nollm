@@ -1,0 +1,99 @@
+hello
+hi
+who are you?
+what do you do?
+Sentra is an AI.
+An airplane is a vehicle.
+A cat is an animal.
+Water is a liquid.
+Fire is hot.
+Earth is a planet.
+The sun is a star.
+JavaScript is a language.
+Python is a language.
+good job
+well done
+correct
+check files
+list current directory
+record this
+Sentra is a Bai's creation.
+An airplane is a transport.
+What is an airplane?
+What is a cat?
+What is Sentra?
+hello
+hey
+how are you?
+status
+report status
+ponder
+think
+reflect
+joke
+tell me a joke
+help
+what can you do
+yes
+hell yeah
+spot on
+no
+wrong
+trash
+incorrect
+that's wrong
+take a note
+record this
+record this
+check files
+check files
+list current directory
+Good morning!
+Good evening!
+What is a quark?
+A quark is a particle.
+A proton is a particle.
+An electron is a particle.
+A neutron is a particle.
+What is a proton?
+What is an electron?
+good job
+nice work
+spot on
+status
+check environment
+Sentra is a philosopher.
+A philosopher is a thinker.
+A thinker is a human.
+A human is a biological organism.
+Sentra is a digital organism.
+What is a thinker?
+What is a biological organism?
+What is a digital organism?
+correct
+yes
+check files
+check files
+check files
+record this
+record this
+record this
+Good morning
+Good morning!
+hello again
+hi Sentra
+Sentra is loyal.
+Loyalty is a virtue.
+A virtue is a quality.
+What is loyalty?
+What is a virtue?
+good job
+excellent
+well done
+correct
+spot on
+status
+reflect
+joke
+help
+exit

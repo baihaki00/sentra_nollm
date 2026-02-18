@@ -1,0 +1,44 @@
+{
+  "INTENT:GREETING": [
+    {
+      "template": "System online. Ready.",
+      "weight": 1
+    },
+    {
+      "template": "I am listening.",
+      "weight": 1
+    },
+    {
+      "template": "Cognition active.",
+      "weight": 0.8
+    }
+  ],
+  "INTENT:FACT_QUERY": [
+    {
+      "template": "${REF1} ${ACT} ${REF2}",
+      "weight": 1
+    },
+    {
+      "template": "${REF1} is a ${REF2}",
+      "weight": 0.8
+    },
+    {
+      "template": "Relation: ${REF1} -> ${ACT} -> ${REF2}",
+      "weight": 0.5
+    }
+  ],
+  "INTENT:STATEMENT": [
+    {
+      "template": "I have learned that ${REF1} ${ACT} ${REF2}.",
+      "weight": 1
+    },
+    {
+      "template": "Noted: ${REF1} ${ACT} ${REF2}.",
+      "weight": 0.8
+    },
+    {
+      "template": "Knowledge updated.",
+      "weight": 0.5
+    }
+  ]
+}

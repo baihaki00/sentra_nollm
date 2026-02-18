@@ -1,0 +1,17 @@
+#!/bin/bash
+# Sentra CLI Shortcut for Linux/Mac/Git-Bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$DIR"
+
+if [ "$1" == "--sleep" ]; then
+    echo "[Sentra] Entering Sleep Cycle..."
+    node scripts/sleep.js
+elif [ "$1" == "--help" ]; then
+    echo "Sentra CLI v0.4"
+    echo "Usage: "
+    echo "  sentra           Launch the interactive CLI"
+    echo "  sentra --sleep   Run the autonomous sleep/consolidation cycle"
+    echo "  sentra --help    Show this help message"
+else
+    node core/main_loop.js "$@"
+fi

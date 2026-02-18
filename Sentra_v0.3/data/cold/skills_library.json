@@ -2,12 +2,12 @@
     "skills": [
         {
             "skillID": "skill_greet",
-            "intentTrigger": "hello",
+            "trigger_intent": [ "hello", "hi", "hey" ],
             "parameters": {},
             "steps": [
                 {
                     "type": "primitive",
-                    "name": "log_output",
+                    "action": "log_output",
                     "params": {
                         "message": "Hello! I am Sentra."
                     }
@@ -17,28 +17,28 @@
         },
         {
             "skillID": "skill_reflect",
-            "intentTrigger": "reflect",
+            "trigger_intent": [ "reflect", "ponder", "think" ],
             "parameters": {},
             "steps": [
                 {
                     "type": "primitive",
-                    "name": "log_output",
+                    "action": "log_thought",
                     "params": {
-                        "message": "Starting reflection sequence..."
+                        "thought": "Accessing narrative arc and reviewing recent achievements..."
                     }
                 },
                 {
                     "type": "primitive",
-                    "name": "wait",
+                    "action": "meta_reflect",
                     "params": {
-                        "ms": 500
+                        "achievement": "Performed deep self-reflection cycle."
                     }
                 },
                 {
                     "type": "primitive",
-                    "name": "log_output",
+                    "action": "log_output",
                     "params": {
-                        "message": "Reflection complete."
+                        "message": "I have consolidated my recent experiences into my narrative memory."
                     }
                 }
             ],
@@ -46,12 +46,12 @@
         },
         {
             "skillID": "skill_complex_greet",
-            "intentTrigger": "greet_formal",
+            "trigger_intent": [ "greet_formal" ],
             "parameters": {},
             "steps": [
                 {
                     "type": "primitive",
-                    "name": "log_output",
+                    "action": "log_output",
                     "params": {
                         "message": "attention!"
                     }
@@ -124,7 +124,10 @@
                 "correct",
                 "good job",
                 "hell yeah",
-                "spot on"
+                "spot on",
+                "good",
+                "nice",
+                "excellent"
             ],
             "steps": [
                 {
@@ -188,6 +191,26 @@
                 }
             ],
             "avgEnergyCost": 0.2
+        },
+        {
+            "skillID": "skill_files",
+            "trigger_intent": [
+                "check files",
+                "list current directory"
+            ],
+            "parameters": {
+                "command": "dir"
+            },
+            "steps": [
+                {
+                    "type": "primitive",
+                    "action": "execute_shell",
+                    "params": {
+                        "command": "{command}"
+                    }
+                }
+            ],
+            "avgEnergyCost": 0.3
         }
     ]
 }

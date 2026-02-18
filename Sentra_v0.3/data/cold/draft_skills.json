@@ -1,0 +1,90 @@
+[
+  {
+    "draftID": "draft_1771431473375_7",
+    "description": "Automated sequence following: \"what are you doing?\"",
+    "trigger_sample": "what are you doing?",
+    "sequence": [
+      "learned_bootstrap_1771373708184_741",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771431635796_1",
+    "description": "Automated sequence following: \"what is sentra?\"",
+    "trigger_sample": "what is sentra?",
+    "sequence": [
+      "meta_query_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771432162080_1",
+    "description": "Automated sequence following: \"What is DNA?\"",
+    "trigger_sample": "What is DNA?",
+    "sequence": [
+      "meta_query_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771432612980_11",
+    "description": "Automated sequence following: \"What is a dog?\"",
+    "trigger_sample": "What is a dog?",
+    "sequence": [
+      "meta_query_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771432612980_15",
+    "description": "Automated sequence following: \"What is a cat?\"",
+    "trigger_sample": "What is a cat?",
+    "sequence": [
+      "meta_query_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771433299045_3",
+    "description": "Automated sequence following: \"what is Sentra?\"",
+    "trigger_sample": "what is Sentra?",
+    "sequence": [
+      "meta_query_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771433299045_5",
+    "description": "Automated sequence following: \"What is a fish?\"",
+    "trigger_sample": "What is a fish?",
+    "sequence": [
+      "meta_query_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771433554695_4",
+    "description": "Automated sequence following: \"Who is Bai?\"",
+    "trigger_sample": "Who is Bai?",
+    "sequence": [
+      "learned_1771371830698",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  }
+]
