@@ -74,7 +74,7 @@
             "steps": [
                 {
                     "type": "primitive",
-                    "action": "report_status",
+                    "action": "check_environment",
                     "params": {}
                 }
             ],
@@ -115,6 +115,79 @@
                 }
             ],
             "avgEnergyCost": 0.1
+        },
+        {
+            "skillID": "meta_feedback_positive",
+            "description": "Positive reinforcement",
+            "trigger_intent": [
+                "yes",
+                "correct",
+                "good job",
+                "hell yeah",
+                "spot on"
+            ],
+            "steps": [
+                {
+                    "type": "primitive",
+                    "action": "adjust_reward",
+                    "params": {
+                        "value": 1,
+                        "confirm": "I'm glad I met your expectations."
+                    }
+                }
+            ]
+        },
+        {
+            "skillID": "meta_feedback_negative",
+            "description": "Negative reinforcement",
+            "trigger_intent": [
+                "no",
+                "wrong",
+                "trash",
+                "incorrect",
+                "that's wrong"
+            ],
+            "steps": [
+                {
+                    "type": "primitive",
+                    "action": "adjust_reward",
+                    "params": {
+                        "value": 0,
+                        "confirm": "Noted. I'll correct my model during sleep."
+                    }
+                }
+            ]
+        },
+        {
+            "skillID": "skill_note",
+            "trigger_intent": [
+                "take a note",
+                "record this"
+            ],
+            "parameters": {
+                "path": "sentra_notes.txt",
+                "content": "New note from Sentra.",
+                "append": true
+            },
+            "steps": [
+                {
+                    "type": "primitive",
+                    "action": "write_file",
+                    "params": {
+                        "path": "{path}",
+                        "content": "{content}",
+                        "append": "{append}"
+                    }
+                },
+                {
+                    "type": "primitive",
+                    "action": "log_output",
+                    "params": {
+                        "message": "Note recorded to sentra_notes.txt."
+                    }
+                }
+            ],
+            "avgEnergyCost": 0.2
         }
     ]
 }

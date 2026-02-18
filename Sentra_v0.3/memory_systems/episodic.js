@@ -38,6 +38,8 @@ class EpisodicMemory {
                 reward REAL,
                 outcome_state BLOB,
                 surprise REAL,
+                raw_input TEXT,
+                action_params TEXT,
                 consolidated INTEGER DEFAULT 0
             )
         `;
@@ -45,20 +47,21 @@ class EpisodicMemory {
         this.db.run(createEpisodes);
     }
 
-    log(stateVector, actionTaken, reward = 0, outcomeState = null, surprise = 0) {
+    log(stateVector, actionTaken, reward = 0, outcomeState = null, surprise = 0, rawInput = "", actionParams = null) {
         return new Promise((resolve, reject) => {
             const timestamp = Date.now();
             // Convert state vectors to JSON strings or Buffers for storage if they are arrays
             // Assuming stateVector is array of indices from Perception
             const stateBlob = stateVector ? JSON.stringify(stateVector) : null;
             const outcomeBlob = outcomeState ? JSON.stringify(outcomeState) : null;
+            const paramsBlob = actionParams ? JSON.stringify(actionParams) : null;
 
             const stmt = this.db.prepare(`
-                INSERT INTO episodes (timestamp, state_vector, action_taken, reward, outcome_state, surprise)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO episodes (timestamp, state_vector, action_taken, reward, outcome_state, surprise, raw_input, action_params)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `);
 
-            stmt.run(timestamp, stateBlob, actionTaken, reward, outcomeBlob, surprise, function (err) {
+            stmt.run(timestamp, stateBlob, actionTaken, reward, outcomeBlob, surprise, rawInput, paramsBlob, function (err) {
                 stmt.finalize(); // Finalize after execution
                 if (err) reject(err);
                 else resolve(this.lastID);
@@ -93,11 +96,22 @@ class EpisodicMemory {
         });
     }
 
-    updateSurprise(id, newSurprise) {
+    updateReward(id, rewardValue) {
         return new Promise((resolve, reject) => {
-            const stmt = this.db.prepare("UPDATE episodes SET surprise = ? WHERE episode_id = ?");
-            stmt.run(newSurprise, id, function (err) {
-                stmt.finalize(); // Finalize after execution
+            const stmt = this.db.prepare("UPDATE episodes SET reward = ? WHERE episode_id = ?");
+            stmt.run(rewardValue, id, function (err) {
+                stmt.finalize();
+                if (err) reject(err);
+                else resolve(this.changes);
+            });
+        });
+    }
+
+    markConsolidated(id) {
+        return new Promise((resolve, reject) => {
+            const stmt = this.db.prepare("UPDATE episodes SET consolidated = 1 WHERE episode_id = ?");
+            stmt.run(id, function (err) {
+                stmt.finalize();
                 if (err) reject(err);
                 else resolve(this.changes);
             });
@@ -105,7 +119,7 @@ class EpisodicMemory {
     }
 
     close() {
-        this.db.close();
+        if (this.db) this.db.close();
     }
 }
 

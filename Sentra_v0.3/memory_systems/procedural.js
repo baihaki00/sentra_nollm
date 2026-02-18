@@ -220,6 +220,76 @@ class ProceduralMemory {
         return null; // Fallback to Teacher Mode (Legacy)
     }
 
+    checkDrafts(input, perception) {
+        const DRAFTS_FILE = path.join(__dirname, '../data/cold/draft_skills.json');
+        if (!fs.existsSync(DRAFTS_FILE)) return null;
+
+        try {
+            const drafts = JSON.parse(fs.readFileSync(DRAFTS_FILE, 'utf8'));
+            if (drafts.length === 0) return null;
+
+            const inputVector = perception.textToVector(input);
+            for (const draft of drafts) {
+                const draftVector = perception.textToVector(draft.trigger_sample);
+                const dist = perception.hammingDistance(inputVector, draftVector);
+
+                if (dist < 40) {
+                    return draft;
+                }
+            }
+        } catch (e) {
+            console.error("Failed to check drafts:", e);
+        }
+        return null;
+    }
+
+    solidifySkill(draftId) {
+        const DRAFTS_FILE = path.join(__dirname, '../data/cold/draft_skills.json');
+        const LEARNED_FILE = path.join(__dirname, '../data/cold/learned_skills.json');
+
+        try {
+            let drafts = JSON.parse(fs.readFileSync(DRAFTS_FILE, 'utf8'));
+            const draftIndex = drafts.findIndex(d => d.draftID === draftId);
+            if (draftIndex === -1) return false;
+
+            const draft = drafts[draftIndex];
+
+            // Convert draft to permanent skill
+            const skillId = `auto_${Date.now()}`;
+            const newSkill = {
+                skillID: skillId,
+                description: draft.description,
+                trigger_intent: [draft.trigger_sample.toLowerCase()],
+                steps: draft.sequence.map(action => {
+                    // Check if it's a known skill or needs custom wrapper
+                    return { type: "skill", name: action };
+                }),
+                is_automated: true
+            };
+
+            // Add to memory
+            this.skills[skillId] = newSkill;
+
+            // Save to learned_skills.json
+            let learned = [];
+            if (fs.existsSync(LEARNED_FILE)) {
+                learned = JSON.parse(fs.readFileSync(LEARNED_FILE, 'utf8'));
+            }
+            learned.push(newSkill);
+            fs.writeFileSync(LEARNED_FILE, JSON.stringify(learned, null, 2));
+
+            // Remove from drafts
+            drafts.splice(draftIndex, 1);
+            fs.writeFileSync(DRAFTS_FILE, JSON.stringify(drafts, null, 2));
+
+            console.log(`\x1b[32m[Basal Ganglia]\x1b[0m Draft ${draftId} solidified into permanent skill: ${skillId}`);
+            return true;
+        } catch (e) {
+            console.error("Failed to solidify skill:", e);
+            return false;
+        }
+    }
+
     async execute(skillIdOrObj, context = {}) {
         let skill = skillIdOrObj;
 
@@ -235,6 +305,7 @@ class ProceduralMemory {
 
         // Blue for Basal Ganglia/Skills
         console.log(`\x1b[34m[Basal Ganglia]\x1b[0m Executing Skill: ${skill.skillID}`);
+        global.LAST_ACTION_PARAMS = skill.parameters || {}; // Capture for episodic log
 
         for (const step of skill.steps) {
             try {
@@ -268,6 +339,68 @@ class ProceduralMemory {
                         } else {
                             await this.outputBus.logOutput({ message: "[Internal State] Unavailable (Context missing)" });
                         }
+                    } else if (step.action === 'check_environment') {
+                        // Sensorium Primitive
+                        if (context && context.stm && context.stm.context.environmental_state) {
+                            const env = context.stm.context.environmental_state;
+                            const freeMemGB = (env.free_memory / (1024 * 1024 * 1024)).toFixed(2);
+                            const totalMemGB = (env.total_memory / (1024 * 1024 * 1024)).toFixed(2);
+
+                            const report = `[Sensorium] OS: ${env.platform} | Workspace: ${env.cwd} | Free Mem: ${freeMemGB}GB / ${totalMemGB}GB`;
+                            await this.outputBus.logOutput({ message: report });
+
+                            if (context.stm) {
+                                context.stm.addInteraction('sentra', report);
+                            }
+                        } else {
+                            await this.outputBus.logOutput({ message: "[Sensorium] Offline (Environmental state missing)" });
+                        }
+                    } else if (step.action === 'write_file') {
+                        // Motor Primitive: write_file
+                        // params: { path: "string", content: "string", append: boolean }
+                        try {
+                            const fs = require('fs');
+                            const targetPath = step.params.path || 'sentra_notes.txt';
+                            const content = step.params.content || '';
+                            const absolutePath = path.isAbsolute(targetPath) ? targetPath : path.join(__dirname, '..', targetPath);
+
+                            if (step.params.append) {
+                                fs.appendFileSync(absolutePath, content + '\n');
+                            } else {
+                                fs.writeFileSync(absolutePath, content);
+                            }
+                            
+                            const msg = `[Motor] Successfully wrote to ${targetPath}.`;
+                            await this.outputBus.logOutput({ message: msg });
+                            if (context.stm) context.stm.addInteraction('sentra', msg);
+                        } catch (err) {
+                            console.error("Motor Error (write_file):", err);
+                            await this.outputBus.logOutput({ message: `[Motor Error] Failed to write to file: ${err.message}` });
+                        }
+
+                    } else if (step.action === 'execute_shell') {
+                        // Motor Primitive: execute_shell
+                        // params: { command: "string" }
+                        // GATED: For v0.4, we use a simple whitelist or safety check
+                        try {
+                            const { execSync } = require('child_process');
+                            const cmd = step.params.command;
+                            
+                            // Safety Check: Avoid destructive commands
+                            const destructive = /rm -rf|del \/s|format|mkfs/i;
+                            if (destructive.test(cmd)) {
+                                throw new Error("Destructive command blocked by safety filter.");
+                            }
+
+                            const output = execSync(cmd, { encoding: 'utf8', timeout: 5000 });
+                            const msg = `[Motor] Command output: ${output.slice(0, 500)}${output.length > 500 ? '...' : ''}`;
+                            await this.outputBus.logOutput({ message: msg });
+                            if (context.stm) context.stm.addInteraction('sentra', msg);
+                        } catch (err) {
+                            console.error("Motor Error (execute_shell):", err);
+                            await this.outputBus.logOutput({ message: `[Motor Error] Command failed: ${err.message}` });
+                        }
+
                     } else if (step.action === 'extract_fact') {
                         // Primitive: extract_fact
                         // params: { regex: "My name is (.*)", key: "name", confirm: "Nice to meet you, {value}." }
@@ -482,6 +615,28 @@ class ProceduralMemory {
                                         }
                                     }
                                 }
+                            }
+                        }
+                    } else if (step.action === 'adjust_reward') {
+                        // Primitive: adjust_reward (Phase 18.2)
+                        // Context: "Yes", "Wrong", "Good job"
+                        // Finds the PREVIOUS episode and updates its reward.
+
+                        if (context && context.homeostasis && context.homeostasis.episodic) {
+                            const rewardValue = step.params.value ?? 0.5;
+                            const episodic = context.homeostasis.episodic;
+
+                            // Get last episode
+                            const recent = await episodic.getRecent(1);
+                            if (recent && recent.length > 0) {
+                                const epId = recent[0].episode_id;
+                                await episodic.updateReward(epId, rewardValue);
+
+                                const msg = step.params.confirm || (rewardValue > 0.5 ? "I will remember that I did well." : "I will learn from this mistake.");
+                                await this.outputBus.logOutput({ message: msg });
+                                context.stm.addInteraction('sentra', msg);
+                            } else {
+                                await this.outputBus.logOutput({ message: "I have no recent memories to reflect on." });
                             }
                         }
                     } else {

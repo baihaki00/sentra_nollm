@@ -19,6 +19,7 @@ const perception = new Perception();
 const attention = new Attention();
 const semantic = new SemanticMemory();
 const episodic = new EpisodicMemory();
+const inputBus = require('../interfaces/input_bus');
 const outputBus = new OutputBus();
 const procedural = new ProceduralMemory(outputBus);
 const homeostasis = new Homeostasis(episodic);
@@ -49,6 +50,11 @@ async function main() {
     await new Promise(r => setTimeout(r, 100));
 
     while (true) {
+        // 0. Peripheral Sense (The Sensorium)
+        const envState = inputBus.scanEnvironment();
+        const envSensation = perception.normalize(envState);
+        stm.updateContext('environmental_state', envState);
+
         // 1. Observe (Input)
         const input = await askQuestion(`\nInput > `);
 
@@ -67,7 +73,9 @@ async function main() {
         const sensation = perception.normalize(input);
 
         // 3. Orient (Attention)
-        const focusState = attention.focus(sensation);
+        // Combine text sensation with environmental sensation
+        const combinedSensation = [...new Set([...sensation, ...envSensation])];
+        const focusState = attention.focus(combinedSensation);
 
         // 3.5 Associate (Semantic Memory & RAM)
         console.log(`\x1b[36m[Neural Activity]\x1b[0m Activated Prototypes: [${sensation.slice(0, 5).join(',')}]`);
@@ -88,7 +96,32 @@ async function main() {
         // 5. Act (Procedural Memory & Output Bus)
         let actionName = "thought_loop";
 
-        if (global.LEARNING_STATE && global.LEARNING_STATE.active) {
+        if (global.PROPOSAL_STATE && global.PROPOSAL_STATE.active) {
+            // WE ARE IN PROPOSAL MODE
+            const draft = global.PROPOSAL_STATE.draft;
+            const userChoice = input.toLowerCase().trim();
+
+            if (userChoice === 'yes' || userChoice === 'y') {
+                const success = procedural.solidifySkill(draft.draftID);
+                if (success) {
+                    const msg = "Automation successful. I've added a new permanent skill to my repertoire.";
+                    console.log(`\x1b[32m[Sentra]: ${msg}\x1b[0m`);
+                    stm.addInteraction('sentra', msg);
+                } else {
+                    const msg = "I encountered an error while updating my skills.";
+                    console.log(`\x1b[32m[Sentra]: ${msg}\x1b[0m`);
+                    stm.addInteraction('sentra', msg);
+                }
+            } else {
+                const msg = "Understood. I'll stick to my current reflexes.";
+                console.log(`\x1b[32m[Sentra]: ${msg}\x1b[0m`);
+                stm.addInteraction('sentra', msg);
+            }
+
+            global.PROPOSAL_STATE = null;
+            actionName = "solidify_skill";
+
+        } else if (global.LEARNING_STATE && global.LEARNING_STATE.active) {
             // WE ARE IN TEACHER MODE
             const trigger = global.LEARNING_STATE.trigger;
             const response = input;
@@ -110,35 +143,51 @@ async function main() {
 
         } else {
             // NORMAL MODE
-            // Phase 10: Pass perception for fuzzy matching
-            // Phase 12: Pass Context for future contextual retrieval
-            const skill = procedural.retrieve(input, perception, stm.getContext());
 
-            if (skill) {
-                console.log(`\x1b[35m[Decision]\x1b[0m Intent matches skill: ${skill.skillID}`);
-
-                // Pass context (homeostasis AND stm) for introspection and logging
-                // We pass 'stm' so the primitive can log the output if needed, or we can check 'executed' status
-                const executionResult = await procedural.execute(skill, { homeostasis, stm, perception, semantic });
-
-                // Note: procedural.execute currently returns true/false. 
-                // In Phase 12, we rely on procedural.execute to log to STM if we modify it, 
-                // OR we accept that for now only User input is in RAM until we upgrade procedural.js
-
-                actionName = skill.skillID;
-            } else {
-                console.log(`\x1b[35m[Decision]\x1b[0m No skill found. Entering Teacher Mode.`);
-                const prompt = "I don't know how to respond to that. What should I say?";
+            // 5.1 Pattern Anticipation (The Prophet)
+            const draftMatch = procedural.checkDrafts(input, perception);
+            if (draftMatch) {
+                console.log(`\x1b[35m[Prophet]\x1b[0m Anticipating sequence: ${draftMatch.sequence.join(' -> ')}`);
+                const prompt = `I've noticed a pattern! Should I automate this sequence for you? (Yes/No)`;
                 console.log(`\x1b[32m[Sentra]: ${prompt}\x1b[0m`);
-
                 stm.addInteraction('sentra', prompt);
 
-                // Set State to LEARNING
-                global.LEARNING_STATE = {
+                global.PROPOSAL_STATE = {
                     active: true,
-                    trigger: input
+                    draft: draftMatch
                 };
-                actionName = "ask_for_help";
+                actionName = "propose_automation";
+                // We DON'T return early yet; we execution the current match IF it exists, 
+                // OR we just wait for the Yes/No. 
+                // For safety, let's just wait for Yes/No.
+            } else {
+
+                // Phase 10: Pass perception for fuzzy matching
+                // Phase 12: Pass Context for future contextual retrieval
+                const skill = procedural.retrieve(input, perception, stm.getContext());
+
+                if (skill) {
+                    console.log(`\x1b[35m[Decision]\x1b[0m Intent matches skill: ${skill.skillID}`);
+
+                    // Pass context (homeostasis AND stm) for introspection and logging
+                    // We pass 'stm' so the primitive can log the output if needed, or we can check 'executed' status
+                    const executionResult = await procedural.execute(skill, { homeostasis, stm, perception, semantic });
+
+                    actionName = skill.skillID;
+                } else {
+                    console.log(`\x1b[35m[Decision]\x1b[0m No skill found. Entering Teacher Mode.`);
+                    const prompt = "I don't know how to respond to that. What should I say?";
+                    console.log(`\x1b[32m[Sentra]: ${prompt}\x1b[0m`);
+
+                    stm.addInteraction('sentra', prompt);
+
+                    // Set State to LEARNING
+                    global.LEARNING_STATE = {
+                        active: true,
+                        trigger: input
+                    };
+                    actionName = "ask_for_help";
+                }
             }
         }
 
@@ -148,8 +197,12 @@ async function main() {
         console.log(`\x1b[33m[Neuroplasticity]\x1b[0m World Model updated. Error/Surprise: ${surprise.toFixed(4)}`);
 
         // Log the interaction
-        await episodic.log(focusState, actionName, 0.5, null, surprise);
+        // We need to capture the params used during execution. 
+        // Procedural.execute should ideally return the params it used for the skill if they were dynamically resolved.
+        const lastParams = global.LAST_ACTION_PARAMS || null;
+        await episodic.log(focusState, actionName, 0.5, null, surprise, input, lastParams);
         console.log(`\x1b[33m[Hippocampus]\x1b[0m Episode logged.`);
+        global.LAST_ACTION_PARAMS = null; // Reset
 
         // Trigger internal regulation (Reflection)
         await homeostasis.check(worldModel);

@@ -72,11 +72,56 @@ class Perception {
             return activations;
         }
 
+        // Multi-modal check: Is input an Object (Machine State)?
+        if (typeof input === 'object' && input !== null) {
+            const queryVector = this.stateToVector(input);
+            const activations = this.getActivePrototypes(queryVector);
+            return activations;
+        }
+
         // Text input
         const queryVector = this.textToVector(String(input)); // Ensure string
         const activations = this.getActivePrototypes(queryVector);
 
         return activations;
+    }
+
+    /**
+     * Converts machine state to a 256-bit vector.
+     * Uses a stable representation of platform, arch, and current working directory.
+     */
+    stateToVector(state) {
+        const dim = VECTOR_DIM;
+        const accumulator = new Int32Array(dim).fill(0);
+
+        // Features to encode: platform, CWD, and coarse memory state
+        const features = [
+            `platform:${state.platform}`,
+            `arch:${state.arch}`,
+            `cwd:${state.cwd}`,
+            `mem_low:${state.free_memory < state.total_memory * 0.1}`
+        ];
+
+        for (const feature of features) {
+            const featureHash = this.hashToVector(feature);
+            for (let bit = 0; bit < dim; bit++) {
+                const byteIndex = Math.floor(bit / 8);
+                const bitIndex = bit % 8;
+                const bitVal = (featureHash[byteIndex] >> (7 - bitIndex)) & 1;
+                accumulator[bit] += (bitVal === 1 ? 1 : -1);
+            }
+        }
+
+        const resultBuffer = Buffer.alloc(dim / 8);
+        for (let bit = 0; bit < dim; bit++) {
+            if (accumulator[bit] > 0) {
+                const byteIndex = Math.floor(bit / 8);
+                const bitIndex = bit % 8;
+                resultBuffer[byteIndex] |= (1 << (7 - bitIndex));
+            }
+        }
+
+        return resultBuffer;
     }
 
     /**

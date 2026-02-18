@@ -1,0 +1,137 @@
+/**
+ * Sentra v0.4 - Sleep Cycle
+ * "The Dreaming Loop"
+ * Consolidates Episodic Memory into long-term Semantic/Procedural structures.
+ */
+
+const SemanticMemory = require('../memory_systems/semantic');
+const EpisodicMemory = require('../memory_systems/episodic');
+const path = require('path');
+const fs = require('fs');
+
+async function sleep() {
+    console.log(`\x1b[35m[Sleep Cycle] Sentra is dreaming...\x1b[0m`);
+
+    const semantic = new SemanticMemory();
+    const episodic = new EpisodicMemory();
+
+    await semantic.init();
+    await episodic.init();
+
+    // 1. Fetch unconsolidated episodes
+    const unconsolidated = await new Promise((resolve, reject) => {
+        episodic.db.all("SELECT * FROM episodes WHERE consolidated = 0", [], (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+        });
+    });
+
+    if (unconsolidated.length === 0) {
+        console.log("No new memories to consolidate. Sentra is resting peacefully.");
+        episodic.close();
+        semantic.close();
+        return;
+    }
+
+    console.log(`Processing ${unconsolidated.length} new episodes...`);
+
+    const learningEvents = unconsolidated.filter(e => e.action_taken === 'meta_learn_fact');
+
+    // 2. Semantic Consolidation Report
+    if (learningEvents.length > 0) {
+        console.log(`\x1b[36m[Semantic Consolidation]\x1b[0m Reinforced ${learningEvents.length} new facts:`);
+        learningEvents.filter(e => e.reward > 0.3).forEach(e => {
+            if (e.raw_input) console.log(`  > ${e.raw_input}`);
+        });
+    }
+
+    // 3. Active Forgetting (Pruning)
+    const mistakes = unconsolidated.filter(e => e.reward <= 0.3);
+    if (mistakes.length > 0) {
+        console.log(`\x1b[31m[Active Forgetting]\x1b[0m Pruning ${mistakes.length} mistakes:`);
+        mistakes.forEach(e => {
+            if (e.raw_input) console.log(`  - ${e.raw_input}`);
+        });
+
+        for (const mistake of mistakes) {
+            // If it was a learning event, we must deconstruct the fact in the Knowledge Graph
+            if (mistake.action_taken === 'meta_learn_fact' && mistake.raw_input) {
+                try {
+                    // Reverse parse the fact: "A [Subject] is a [Object]"
+                    const match = mistake.raw_input.match(/^(?:(?:a|an)\s+)?(.+?)\s+is\s+(?:(?:a|an)\s+)?(.+)/i);
+                    if (match) {
+                        const subject = match[1].toLowerCase().trim();
+                        const objectRaw = match[2].toLowerCase().trim();
+                        const object = objectRaw.replace(/[.!?]+$/, "");
+
+                        const subNode = await semantic.getNodeByLabel(subject);
+                        const objNode = await semantic.getNodeByLabel(object);
+
+                        if (subNode && objNode) {
+                            await semantic.deleteEdge(subNode.node_id, objNode.node_id, 'is_a');
+                            console.log(`\x1b[31m[Surgical Pruning]\x1b[0m Deleted edge: [${subject}] -> is_a -> [${object}]`);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to surgically prune fact:", e);
+                }
+            }
+        }
+    }
+
+    // 4. Pattern Discovery (Stage 5)
+    // Concept: Identify chains of actions that lead to a "Reward Anchor" (High Reward feedback)
+    console.log(`\x1b[34m[Pattern Discovery]\x1b[0m Scouting for successful interaction chains...`);
+
+    const draftSkillsPath = path.join(__dirname, '../data/cold/draft_skills.json');
+    let drafts = [];
+    if (fs.existsSync(draftSkillsPath)) {
+        drafts = JSON.parse(fs.readFileSync(draftSkillsPath, 'utf8'));
+    }
+
+    // Look for successful chains (Minimum 2 steps ending in high reward)
+    for (let i = 1; i < unconsolidated.length; i++) {
+        const current = unconsolidated[i];
+        const previous = unconsolidated[i - 1];
+
+        // A successful chain is: [Any Action (Rewarded 1.0)] -> [Positive Feedback]
+        if (previous.reward >= 1.0 && current.action_taken === 'meta_feedback_positive' && previous.raw_input) {
+            const patternID = `draft_${Date.now()}_${i}`;
+            const params = previous.action_params ? JSON.parse(previous.action_params) : {};
+            
+            const newDraft = {
+                draftID: patternID,
+                description: `Automated sequence following: "${previous.raw_input}"`,
+                trigger_sample: previous.raw_input,
+                sequence: [previous.action_taken, current.action_taken],
+                params_sample: params,
+                reward_score: (previous.reward + current.reward) / 2
+            };
+
+            // Only add if it's a new unique trigger pattern (simplified)
+            if (!drafts.some(d => d.trigger_sample === previous.raw_input)) {
+                drafts.push(newDraft);
+                console.log(`\x1b[32m[Pattern Discovery]\x1b[0m Detected successful chain! Drafting automation for: "${previous.raw_input}"`);
+            }
+        }
+    }
+
+    fs.writeFileSync(draftSkillsPath, JSON.stringify(drafts, null, 2));
+
+    // 5. Mark all as consolidated or Prune
+    for (const ep of unconsolidated) {
+        if (ep.reward <= 0.3) {
+            // Hard delete mistakes to prevent "Data Wall"
+            await new Promise((resolve) => episodic.db.run("DELETE FROM episodes WHERE episode_id = ?", [ep.episode_id], resolve));
+        } else {
+            await episodic.markConsolidated(ep.episode_id);
+        }
+    }
+
+    console.log(`\x1b[32m[Consolidation Complete]\x1b[0m memories have been processed and optimized.`);
+
+    episodic.close();
+    semantic.close();
+}
+
+sleep().catch(console.error);
