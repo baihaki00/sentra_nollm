@@ -406,15 +406,12 @@ class ProceduralMemory {
                                 const match = text.match(/^(?:(?:a|an)\s+)?(.+?)\s+is\s+(?:(?:a|an)\s+)?(.+)/i);
 
                                 if (match) {
-                                    const subject = match[1].trim(); // e.g. "Quark"
-                                    const object = match[2].trim();  // e.g. "fundamental constituent of matter" or "particle"
+                                    const subject = match[1].toLowerCase().trim();
+                                    const objectRaw = match[2].toLowerCase().trim();
+                                    const object = objectRaw.replace(/[.!?]+$/, ""); // Sanitize punctuation
 
                                     // 1. Get/Create Nodes
-                                    const semantic = require('../memory_systems/semantic'); // Import here or passed in context? 
-                                    // Wait, context doesn't have semantic instance passed to execute usually?
-                                    // We need to access the global semantic instance.
-                                    // In main_loop, we passed 'stm', 'homeostasis', 'perception'. We missed 'semantic'.
-                                    // I'll need to update main_loop to pass 'semantic' too.
+                                    const semantic = require('../memory_systems/semantic');
 
                                     if (context.semantic) {
                                         const subId = await context.semantic.getOrCreateNode(subject, 'Concept');
@@ -436,7 +433,7 @@ class ProceduralMemory {
                             }
                         }
                     } else if (step.action === 'explain_concept') {
-                        // Primitive: explain_concept (Phase 17)
+                        // Primitive: explain_concept (Phase 17.5 Recursive)
                         // Context: "What is X?"
 
                         if (context && context.stm && context.semantic) {
@@ -446,23 +443,43 @@ class ProceduralMemory {
                                 const match = text.match(/what is (?:a|an)?\s*(.+)\?/i);
 
                                 if (match) {
-                                    const label = match[1].trim();
-                                    const node = await context.semantic.getNodeByLabel(label);
+                                    const label = match[1].toLowerCase().trim().replace(/[.!?]+$/, "");
 
-                                    if (node) {
+                                    // RECURSIVE INFERENCE
+                                    const getFullDescription = async (currentLabel, depth = 0, explored = new Set()) => {
+                                        if (depth > 3 || explored.has(currentLabel)) return [];
+                                        explored.add(currentLabel);
+
+                                        const node = await context.semantic.getNodeByLabel(currentLabel);
+                                        if (!node) return [];
+
                                         const edges = await context.semantic.getRelated(node.node_id);
-                                        if (edges && edges.length > 0) {
-                                            const descriptions = edges.map(e => `${e.relation.replace('_', ' ')} ${e.label}`).join(', ');
-                                            const msg = `${node.label} ${descriptions}.`;
-                                            await this.outputBus.logOutput({ message: msg });
-                                            context.stm.addInteraction('sentra', msg);
-                                        } else {
-                                            await this.outputBus.logOutput({ message: `I know of ${node.label}, but I don't have enough details yet.` });
+                                        let results = [];
+                                        for (const edge of edges) {
+                                            results.push({ relation: edge.relation, target: edge.label });
+                                            if (edge.relation === 'is_a') {
+                                                const inherited = await getFullDescription(edge.label, depth + 1, explored);
+                                                results = results.concat(inherited);
+                                            }
                                         }
+                                        return results;
+                                    };
+
+                                    const relations = await getFullDescription(label);
+
+                                    if (relations.length > 0) {
+                                        // Deduplicate and format relations
+                                        const uniqueEntries = Array.from(new Set(relations.map(r => `${r.relation.replace('_', ' ')} ${r.target}`)));
+                                        const msg = `${label} ${uniqueEntries.join(', ')}.`;
+                                        await this.outputBus.logOutput({ message: msg });
+                                        context.stm.addInteraction('sentra', msg);
                                     } else {
-                                        // Fallback to "Unknown" skill behavior if not found in graph?
-                                        // Or just say "I don't have that in my Knowledge Graph."
-                                        await this.outputBus.logOutput({ message: `I do not have a record of ${label} in my Knowledge Graph.` });
+                                        const node = await context.semantic.getNodeByLabel(label);
+                                        if (node) {
+                                            await this.outputBus.logOutput({ message: `I know about ${label}, but I have no relations defined.` });
+                                        } else {
+                                            await this.outputBus.logOutput({ message: `I do not have a record of ${label} in my Knowledge Graph.` });
+                                        }
                                     }
                                 }
                             }
