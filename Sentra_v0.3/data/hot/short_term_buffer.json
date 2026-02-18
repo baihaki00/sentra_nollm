@@ -1,0 +1,52 @@
+[
+  {
+    "role": "user",
+    "text": "What is matter?",
+    "timestamp": 1771378123478
+  },
+  {
+    "role": "user",
+    "text": "Matter is anything that has mass.",
+    "timestamp": 1771378136201
+  },
+  {
+    "role": "sentra",
+    "text": "hello",
+    "timestamp": 1771378136203
+  },
+  {
+    "role": "user",
+    "text": "What is matter?",
+    "timestamp": 1771378246021
+  },
+  {
+    "role": "user",
+    "text": "What is matter?",
+    "timestamp": 1771378340686
+  },
+  {
+    "role": "user",
+    "text": "Matter is anything that has mass.",
+    "timestamp": 1771378356895
+  },
+  {
+    "role": "sentra",
+    "text": "I have updated my internal model: [Matter] -> is_a -> [nything that has mass.]",
+    "timestamp": 1771378356907
+  },
+  {
+    "role": "user",
+    "text": "What is matter?",
+    "timestamp": 1771378425610
+  },
+  {
+    "role": "user",
+    "text": "Matter is anything that has mass.",
+    "timestamp": 1771378434881
+  },
+  {
+    "role": "sentra",
+    "text": "I have updated my internal model: [Matter] -> is_a -> [anything that has mass.]",
+    "timestamp": 1771378434891
+  }
+]

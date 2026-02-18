@@ -1,0 +1,120 @@
+{
+    "skills": [
+        {
+            "skillID": "skill_greet",
+            "intentTrigger": "hello",
+            "parameters": {},
+            "steps": [
+                {
+                    "type": "primitive",
+                    "name": "log_output",
+                    "params": {
+                        "message": "Hello! I am Sentra."
+                    }
+                }
+            ],
+            "avgEnergyCost": 0.1
+        },
+        {
+            "skillID": "skill_reflect",
+            "intentTrigger": "reflect",
+            "parameters": {},
+            "steps": [
+                {
+                    "type": "primitive",
+                    "name": "log_output",
+                    "params": {
+                        "message": "Starting reflection sequence..."
+                    }
+                },
+                {
+                    "type": "primitive",
+                    "name": "wait",
+                    "params": {
+                        "ms": 500
+                    }
+                },
+                {
+                    "type": "primitive",
+                    "name": "log_output",
+                    "params": {
+                        "message": "Reflection complete."
+                    }
+                }
+            ],
+            "avgEnergyCost": 0.5
+        },
+        {
+            "skillID": "skill_complex_greet",
+            "intentTrigger": "greet_formal",
+            "parameters": {},
+            "steps": [
+                {
+                    "type": "primitive",
+                    "name": "log_output",
+                    "params": {
+                        "message": "attention!"
+                    }
+                },
+                {
+                    "type": "skill",
+                    "name": "skill_greet"
+                }
+            ],
+            "avgEnergyCost": 0.2
+        },
+        {
+            "skillID": "skill_status",
+            "trigger_intent": [
+                "report status",
+                "status",
+                "state"
+            ],
+            "parameters": {},
+            "steps": [
+                {
+                    "type": "primitive",
+                    "action": "report_status",
+                    "params": {}
+                }
+            ],
+            "avgEnergyCost": 0.1
+        },
+        {
+            "skillID": "skill_joke",
+            "trigger_intent": [
+                "tell me a joke",
+                "joke"
+            ],
+            "parameters": {},
+            "steps": [
+                {
+                    "type": "primitive",
+                    "action": "log_output",
+                    "params": {
+                        "message": "Why did the neural network break up with the perceptron? Because there was no chemistry, just math."
+                    }
+                }
+            ],
+            "avgEnergyCost": 0.1
+        },
+        {
+            "skillID": "skill_help",
+            "trigger_intent": [
+                "help",
+                "what can you do"
+            ],
+            "parameters": {},
+            "steps": [
+                {
+                    "type": "primitive",
+                    "action": "log_output",
+                    "params": {
+                        "message": "I am Sentra v0.3. I can: Predict, Learn (Teach me!), Reflect (Dream), and Report Status."
+                    }
+                }
+            ],
+            "avgEnergyCost": 0.1
+        }
+    ]
+}
