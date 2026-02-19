@@ -3,16 +3,43 @@
 [---STRICT: FOLLOW THIS IN ALL SECTIONS, NO EXCEPTIONS. THIS IS CRITICAL.]
 [---STRICT: FOLLOW THIS IN ALL SECTIONS, NO EXCEPTIONS. THIS IS CRITICAL.]
 [
-This document (and all contents within this directory) is prepared by Creator, Bai. It is intended for the agentic AI to read first, including all files inside Creator's Notes, to resume exactly where it left off. This folder (Creator's Notes) functions as hands-off documentation. Whoever read & accesses this must:
+    SENTRA: Sovereign Entity for Nonlinear Thought, Reflection & Adaptation
+    A Universal Information Processing Scaffold.
+]
+[
+    CORE PHILOSOPHY AND ARCHITECTURAL CONSTRAINTS THAT YOU MUST ADHERE AT ALL TIME: this scaffold, is Sentra's brain. It is not suppose to grow new lobes (new files), but to "address" knowledge and use them (data) accordingly. This project revolves around Scaffold where the idea is to not to "hardcode", the implementations and all-logic, should be adherence to multi-dynamic, ready-for-all consequences.
+]
+[
+    CORE ANALOGY:
+    # Analogies for Sentra’s Scaffold: Addressing Knowledge And Utilizing Them
 
-    • Accumulate contexts within this directory, especially README.md, Sentra.md, The Last One.md and Test Run Expectations.md
-    • Not modify any files inside Creator's Notes.
-    • Not create new files for this project except whatever that is written in `DIRECTORY STRUCTURE (LOCKED)` section.
-    • Record progress and current states in Progress.md after completing multi-step tasks, to prevent drift from the project objective.  
-    • Strictly follow all instructions in Sentra.md and README.md to maintain alignment with project goals.  
-    • Treat anything written inside "[]" as top priority and follow it without exception.
-    • Strictly whatever that is written in'Sentra.md' and 'README.md'.
-    • All inputs to Sentra must be through CLI input_bus.js, and must pass all the test (refer Test Run Expectations), and maybe soon opens up to remote (Telegram bot, WebUI, app, or etc)
+1. **Server Racks (Data Center Analogy)**  
+   Sentra’s scaffold is like a **data center full of server racks**. The racks, cables, and power infrastructure are fixed—they represent the immutable architecture. Knowledge is stored as data on the servers. Sentra does not build new racks for new information; it **addresses and processes data within the existing racks**, combining and fetching information as needed.
+
+2. **Library Analogy**  
+   The scaffold is a **library building**. Walls, rooms, and shelves are fixed. Knowledge lives as books on the shelves. New books (knowledge) can be added or updated, but no new rooms are built. Sentra **finds and combines information from the existing shelves** to solve tasks.
+
+3. **CPU + RAM Analogy**  
+   The scaffold is like a **CPU and motherboard**—fixed structure. Knowledge is like **RAM**—dynamic, writable memory. Sentra does not grow new cores for new tasks; it **fetches, manipulates, and recombines data in RAM** to generate output.
+
+4. **City & Roads Analogy**  
+   Scaffold is a **city grid** (streets, intersections, utilities—fixed). Knowledge is buildings and resources placed along streets. Sentra does not add new streets for new buildings; it **routes through existing roads** to access and utilize knowledge.
+
+5. **File System / Memory Map Analogy**  
+   Scaffold is a **fixed file system**. Knowledge is files stored in the data directories. No new directories or core files are added for new facts. Sentra **queries and combines data** using the existing file structure, addressing knowledge without modifying the architecture.
+
+]
+[
+     Further, This document (and all contents within this directory) is prepared by Creator, Bai. It is intended for the agentic AI to read-first, including all files inside Creator's Notes, to resume exactly where it left off. This folder (Creator's Notes) functions as hands-off documentation. Whoever read & accesses this must:
+
+        • Accumulate contexts within this directory, especially README.md, Sentra.md, The Last One.md and Test Run Expectations.md
+        • Not modify any files inside Creator's Notes (except Progress.md to let agents track progress and acts as anchor of the project progression, and tips, just like a textbook where its handed off student to next student).
+        • Not create new files for this project except whatever that is written in `DIRECTORY STRUCTURE (LOCKED)` section.
+        • Record progress and current states in Progress.md after completing multi-step tasks, to prevent drift from the project objective.  
+        • Strictly follow all instructions in Sentra.md and README.md to maintain alignment with project goals.  
+        • Treat anything written inside "[]" as top priority and follow it without exception.
+        • Strictly whatever that is written in'Sentra.md' and 'README.md'.
+        • All inputs to Sentra must be through CLI input_bus.js, and must pass all the test (refer Test Run Expectations), and maybe soon opens up to remote (Telegram bot, WebUI, app, or etc)
 ]
 
 **Sentra v0.3 – Project Overview**

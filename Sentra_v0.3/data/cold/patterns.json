@@ -1,0 +1,262 @@
+{
+  "patterns": [
+    {
+      "condition": "what is animal?",
+      "action": "meta_explain_concept",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "who is sentra?",
+      "action": "meta_explain_concept",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "What is cat?",
+      "action": "meta_explain_concept",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "Tell me about yourself.",
+      "action": "learned_1771372423813",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "Eight is 8.",
+      "action": "meta_learn_fact",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "Five is 5.",
+      "action": "meta_learn_fact",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "Three is 3.",
+      "action": "meta_learn_fact",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "Two is 2.",
+      "action": "meta_learn_fact",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "One is 1.",
+      "action": "meta_learn_fact",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "number is quantity.",
+      "action": "meta_learn_fact",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "2 is a number.",
+      "action": "meta_learn_fact",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "1 is a number.",
+      "action": "meta_learn_fact",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "Mars is red.",
+      "action": "meta_learn_fact",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "what is a bird?",
+      "action": "meta_explain_concept",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "What is mingming?",
+      "action": "meta_explain_concept",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "What is a sheep?",
+      "action": "meta_explain_concept",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "Sentra!",
+      "action": "meta_feedback_negative",
+      "avg_reward": 1,
+      "frequency": 2
+    },
+    {
+      "condition": "hey",
+      "action": "skill_greet",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "Y",
+      "action": "solidify_skill",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "What is a chicken?",
+      "action": "meta_explain_concept",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "Chicken is an animal.",
+      "action": "meta_learn_fact",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "list file",
+      "action": "skill_files",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "How are you doing??",
+      "action": "learned_1771372332822",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "what is a cat?",
+      "action": "meta_explain_concept",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "good.",
+      "action": "meta_feedback_positive",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "hello",
+      "action": "skill_greet",
+      "avg_reward": 1,
+      "frequency": 3
+    },
+    {
+      "condition": "wrong",
+      "action": "meta_feedback_negative",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "How are you doing?",
+      "action": "learned_1771372332822",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "Hey!",
+      "action": "meta_feedback_positive",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "what is SENTRA?",
+      "action": "learned_1771377385081",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "show me files",
+      "action": "skill_files",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "City_340 is a city",
+      "action": "skill_status",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "State_34 is in Country_4",
+      "action": "skill_status",
+      "avg_reward": 1,
+      "frequency": 5
+    },
+    {
+      "condition": "City_340 is in State_34",
+      "action": "skill_status",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "City_339 is a city",
+      "action": "skill_status",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "City_339 is in State_34",
+      "action": "skill_status",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "City_338 is a city",
+      "action": "skill_status",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "City_338 is in State_34",
+      "action": "skill_status",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "City_337 is a city",
+      "action": "skill_status",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "City_337 is in State_34",
+      "action": "skill_status",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "City_336 is a city",
+      "action": "skill_status",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "City_336 is in State_34",
+      "action": "skill_status",
+      "avg_reward": 1,
+      "frequency": 1
+    },
+    {
+      "condition": "City_335 is a city",
+      "action": "skill_status",
+      "avg_reward": 1,
+      "frequency": 1
+    }
+  ]
+}

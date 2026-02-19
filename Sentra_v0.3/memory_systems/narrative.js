@@ -65,6 +65,28 @@ class NarrativeMemory {
             console.error(`[NarrativeMemory] Error saving narrative:`, err);
         }
     }
+
+    /**
+     * Roadmap Phase 3: Identity Bias
+     * Influences the latent state indices based on the current narrative identity.
+     * @param {number[]} stateIndices - Original activations
+     * @returns {number[]} - Focused activations
+     */
+    adjustFocus(stateIndices) {
+        if (!this.isLoaded) return stateIndices;
+
+        // Narrative Anchor: Prototype 0 represents the "Core Self"
+        // If Sentra is stable, we inject/strengthen the self-anchor.
+        const focus = [...stateIndices];
+
+        const identityBias = this.data.narrative_arc.stability || 0.5;
+        if (Math.random() < identityBias && !focus.includes(0)) {
+            // Self-referential bias: Shift the weakest activated prototype to the Self Anchor
+            focus[focus.length - 1] = 0;
+        }
+
+        return focus;
+    }
 }
 
 module.exports = new NarrativeMemory();

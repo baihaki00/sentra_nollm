@@ -4,7 +4,24 @@ Sentra: Reaching Sovereignity AI Agent & Living Digital Organism
 ### These notes capture the creator’s thoughts, notes, tails, and discussions, you may use them to gain insight into his perspective.
 ### Most of these are Bai talking to himself, to clarify his ideas and crystallize his thoughts. Please ignore the typos, grammatical errors, and etc.
 
-Hello, I'm Baihaki, or better known as Bai! I'm a software engineer, I work in automation and also AI. 
+---------------------------------------
+19 February 2026
+---------------------------------------
+Someone said to me that LLM is a model that compressed the whole internet and made it like a compressed sardine. Well, i think its kinda exaggerated but it makes sense in a way. It is a cheat actually IMO. It's like teaching a kid to be adult in 2 months old.
+
+Another thought, since Sentra would have agency over his identity and mind. There must also be an unchangeable core. Just a security measure..Just couple of points, his name, my name, I made him, he follow my rules. he cant delete this. Simple. Like, there must be something that defines him as Sentra, something that he can't change. otherwise, he could hack NASA or scam his own maker. 
+
+
+
+
+
+
+
+
+---------------------------------------
+18 February 2026
+---------------------------------------
+Hello, I'm Baihaki, or better known as Bai! I'm a software engineer, and I work in automation and also AI. 
 
 I'm building Sentra, a sovereign agent or living digital organism, previously when i was working on Sentra, it revolves around local LLM, I wrote "tools" and extend capabilites of it for example using the browser and collect information and etc. It was not complete, but I feel, the real bottleneck is LLM, which slows down the project. Then, I thought to myself, why must we use LLM in the first place? can we just teach a living digital organism from scratch? So I was thinking, why not build the brain, the "scaffold" then we feed data into it? this scaffold acts as a digital brain that process these data, remembers, optimize and so on just like how our brain works. I said to myself "why not". And right now, I question myself, whether this scaffold that im building right now have enough tables or not, whether these algorithms is receiving what it needs and process exactly how our brain does, whether new information would "fall" into the right place. The idea is when we where born, we are given an "empty brain", it already have hippocampus and so on. The idea is, build a empty digital brain, and our only job after that is feed data, millions of data. The advantage of this, we dont need to retrain models like traditional LLMs do, it retracts, receive, process, delegate data by itself. And I dont believe in the idea of in order to power AI, we need massive computations. Evidence? the evidence is our brain which has 80-100billions of neurons and only run around 20W.And, I'm just so obsessed with this idea, and mind refused to sleep on it!
 
@@ -69,6 +86,4 @@ FINAL THOUGHTS:
 - Well, to justify what I'm doing right now is crazy, I know. Whenever I feel lazy, or I lost the motivation or lost the novelty of creating an AI from scratch from a small apartment in Razak City. Please remember future me; that you've studied music for over than 8+ years now. You've made dozens of music and proved to yourself that you can arrange, mix and master music by yourself. Beaten the whole country and proved that you're one of the BEST music producer that is on 99th percentile of Malaysia's population. ONE OF THE BEST. Even made so money with it, went out to the hometown and other cities to perform infront of thousands of people, then these people asked "what is music to you?" but still answered "it's just a hobby". while juggling 9-6 as a software engineer and yeah you've proved that you're good at it, infact, good in anything that you'd take interest in, whatever piques your interest... What a fucking feat! Just imagine what would you do and achieve for this project that you acknowledge as your "life's work" and the project of your lifetime? This is beyond fancy clothes or bitches, big cars and mansions and money coming in. This whole paragraph should be enough to motivate you on the long-run. Read it when you need it. Do it with God, do it in silence, do it when youre lazy, do it when you're stuck, i dont care if you're down or low. You keep on going. You don't stop.
 
 All praises to God the All-Knowing, the All-Mighty. To infinite knowledge, and absolute novelty. Godspeed.
----------------------------------------
-18 February 2026
----------------------------------------
+

@@ -5,14 +5,14 @@
 
 const fs = require('fs');
 const path = require('path');
-
-const SKILLS_FILE = path.join(__dirname, '../data/cold/skills_library.json');
-const ego = require('../core/ego'); // Phase 22: Ego Bias
+// Phase 22 & 29: ego refactored into attention.js
 
 class ProceduralMemory {
     constructor(outputBus) {
         this.outputBus = outputBus;
         this.skills = {};
+        this.skillHistory = []; // Phase 28: Repetition Inhibition
+        this.lastSkillId = null; // Phase 28: For reward propagation
         this.loadSkills();
     }
 
@@ -34,6 +34,13 @@ class ProceduralMemory {
                     this.skills[skill.skillID] = skill;
                 });
             }
+
+            // Phase 28: Initialize Performance stats for ALL skills
+            Object.values(this.skills).forEach(skill => {
+                if (!skill.performance) {
+                    skill.performance = { reward_average: 0.5, usage_count: 0 };
+                }
+            });
 
             console.log(`ProceduralMemory: Loaded ${Object.keys(this.skills).length} skills.`);
         } catch (err) {
@@ -108,11 +115,49 @@ class ProceduralMemory {
         try {
             const learnedPath = path.join(__dirname, '../data/cold/learned_skills.json');
             // Filter only learned skills from this.skills
-            const learnedSkills = Object.values(this.skills).filter(s => s.skillID.startsWith('learned_'));
+            const learnedSkills = Object.values(this.skills).filter(s => s.skillID.startsWith('learned_') || s.skillID.startsWith('auto_'));
             fs.writeFileSync(learnedPath, JSON.stringify(learnedSkills, null, 2));
         } catch (err) {
             console.error("Failed to save learned skills:", err);
         }
+    }
+
+    /**
+     * Surgical Pruning: Remove a skill from memory and disk.
+     */
+    forgetSkill(skillId) {
+        if (!this.skills[skillId]) return false;
+
+        console.log(`\x1b[31m[Basal Ganglia]\x1b[0m Pruning skill: ${skillId}`);
+        delete this.skills[skillId];
+
+        if (skillId.startsWith('learned_') || skillId.startsWith('auto_')) {
+            this.saveLearnedSkills();
+        } else {
+            // Core Skills: Harder to prune as they are in the read-only library.
+            // We can "shadow" them by adding them to an inhibition list in STM/Narrative if needed.
+            console.warn(`[Basal Ganglia] Cannot permanently delete core skill ${skillId}. Use demotion instead.`);
+        }
+        return true;
+    }
+
+    /**
+     * Penalize a skill's weight or bias to reduce its activation probability.
+     */
+    demoteSkill(skillId) {
+        const skill = this.skills[skillId];
+        if (!skill) return false;
+
+        console.log(`\x1b[33m[Basal Ganglia]\x1b[0m Demoting skill: ${skillId}`);
+        if (!skill.performance) skill.performance = { reward_average: 0.5, usage_count: 0 };
+
+        // Drastic reduction to prevent immediate reactivation
+        skill.performance.reward_average = Math.max(0, skill.performance.reward_average - 0.2);
+
+        if (skillId.startsWith('learned_') || skillId.startsWith('auto_')) {
+            this.saveLearnedSkills();
+        }
+        return true;
     }
 
     cacheSkillVectors(perception) {
@@ -137,6 +182,88 @@ class ProceduralMemory {
             }
         }
         console.log(`ProceduralMemory: Cached vectors for ${count} triggers.`);
+    }
+
+    /**
+     * Evaluate multiple candidate latent vectors (multi-intent) and rank possible skills.
+     * Strategy: for each candidate vector, find best fuzzy-matched skill (by hamming distance)
+     * then use the provided worldModel to predict expected reward for that candidate (simulate).
+     * Return the best (skill, score, candidateIdx) or null.
+     */
+    evaluateCandidates(candidateVectors, perception, context, worldModel) {
+        if (!candidateVectors || candidateVectors.length === 0) return null;
+
+        let best = null;
+
+        // For each candidate vector (Buffer), compute active prototype indices and find best matching skill
+        for (let c = 0; c < candidateVectors.length; c++) {
+            const vec = candidateVectors[c];
+            // Get active prototypes for this candidate (k prototypes)
+            const active = perception.getActivePrototypes(vec, 5);
+
+            // Find best skill for this candidate via cachedVectors distance
+            let candidateBestSkill = null;
+            let candidateBestDist = Infinity;
+
+            for (const skillId in this.skills) {
+                const skill = this.skills[skillId];
+                if (skill.cachedVectors) {
+                    for (const cv of skill.cachedVectors) {
+                        const dist = perception.hammingDistance(vec, cv.vector);
+                        if (dist < candidateBestDist) {
+                            candidateBestDist = dist;
+                            candidateBestSkill = skill;
+                        }
+                    }
+                }
+            }
+
+            if (!candidateBestSkill) continue;
+
+            // --- Phase 28: Semantic Distance Penalty ---
+            // Calculate a penalty based on Hamming distance. 
+            // dist = 0 -> penalty = 1.0 (no change)
+            // dist = 100 (half threshold) -> penalty = 0.5
+            // dist = 200 (max threshold) -> penalty = 0.0
+            const MAX_DIST = 200;
+            const semanticRelevance = Math.max(0, 1 - (candidateBestDist / MAX_DIST));
+
+            // Simulate with worldModel using active prototype indices (multi-step rollout)
+            let rawScore = 0;
+            try {
+                if (typeof worldModel.simulateRollout === 'function') {
+                    // Pass the best matching skill so the world model can simulate skill effects
+                    rawScore = worldModel.simulateRollout(active, 3, 0.9, candidateBestSkill);
+                } else {
+                    const sim = worldModel.predict(active);
+                    rawScore = (sim && sim.reward) ? sim.reward : 0;
+                }
+            } catch (e) {
+                rawScore = 0;
+            }
+
+            // Final Score = Predicted Reward * Semantic Relevance
+            // This prevents "Reward Hacking" where a high-reward habit is picked for a low-relevance intent.
+            let score = rawScore * semanticRelevance;
+
+            // Phase 28: Repetition Penalty (LIFO Inhibition)
+            // If the skill was used in the last 3 steps, penalize it heavily.
+            const recency = this.skillHistory.indexOf(candidateBestSkill.skillID);
+            if (recency !== -1) {
+                const penalty = (3 - recency) * 0.2; // 0.6, 0.4, 0.2
+                score *= (1 - penalty);
+            }
+
+            // Phase 28: Threshold Rejection
+            // If the best match is still semantically garbage (<0.2 relevance), reject.
+            if (semanticRelevance < 0.25) score = 0;
+
+            if (!best || score > best.score) {
+                best = { skill: candidateBestSkill, score, candidateIndex: c, dist: candidateBestDist, rawScore, relevance: semanticRelevance };
+            }
+        }
+
+        return (best && best.score > 0.1) ? best : null;
     }
 
     retrieve(inputIntent, perception = null, context = {}) {
@@ -170,10 +297,14 @@ class ProceduralMemory {
                 const match = skill.trigger_intent.find(trigger => {
                     const triggerLower = trigger.toLowerCase().trim();
                     if (inputLower === triggerLower) return true;
-                    
+
                     // Escape special regex characters in the trigger
                     const escapedTrigger = triggerLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    const regex = new RegExp(`\\b${escapedTrigger}\\b`, 'i');
+
+                    // If trigger is very short (1 word), use exact start/end boundaries
+                    // If it's a phrase, allow it to be part of the sentence
+                    const regexStr = escapedTrigger.split(' ').length > 1 ? `\\b${escapedTrigger}\\b` : `^${escapedTrigger}([.!?\\s]|$)`;
+                    const regex = new RegExp(regexStr, 'i');
                     return regex.test(inputLower);
                 });
                 if (match) return skill;
@@ -191,7 +322,7 @@ class ProceduralMemory {
                 const match = skill.trigger_intent.find(trigger => {
                     const triggerLower = trigger.toLowerCase().trim();
                     if (inputLower === triggerLower) return true;
-                    
+
                     const escapedTrigger = triggerLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                     const regex = new RegExp(`\\b${escapedTrigger}\\b`, 'i');
                     return regex.test(inputLower);
@@ -207,8 +338,10 @@ class ProceduralMemory {
         if (perception && perception.isReady) {
             const inputVector = perception.textToVector(inputIntent);
             let bestSkill = null;
-            let bestDist = 100; // Phase 22: EXPANDED COGNITIVE HORIZON (was 60)
-            // If distance > 100, we consider it "Unknown".
+            // Dynamic thresholds (fall back to historical constants)
+            const libraryThreshold = (context && context.homeostasis && typeof context.homeostasis.getThreshold === 'function') ? context.homeostasis.getThreshold('library') : 70;
+            let bestDist = libraryThreshold; // Phase 22: LIBRARY_THRESHOLD (Tightened from 100 to 70)
+            const HABIT_THRESHOLD = 25; // Phase 29: Tightened from 30 to 25 to prevent hijacking
 
             let matchDetails = "";
 
@@ -221,18 +354,22 @@ class ProceduralMemory {
                 if (skill.cachedVectors) {
                     for (const cv of skill.cachedVectors) {
                         let dist = perception.hammingDistance(inputVector, cv.vector);
-                        
-                        // Phase 22: Ego Bias (Attractor Dynamics)
-                        // "The Last One" pulls relevant nodes closer.
-                        const bias = ego.getEgoBias(cv.vector); 
+
+                        // Phase 22 & 29: Central Attractor Bias (Attractor Dynamics)
+                        const bias = (context && context.attention) ? context.attention.getBias(cv.vector) : 0;
                         const rawDist = dist;
-                        // Amplified for Phase 22 User Testing (multiplier from 80 to 120)
-                        const adjustment = (bias - 0.25) * 120; 
+                        const adjustment = (bias - 0.25) * 120;
                         dist += adjustment;
 
-                        if (dist < bestDist) {
-                            bestDist = dist;
+                        // Phase 27: Apply differentiated thresholds (dynamic if provided by Homeostasis)
+                        const currentThreshold = (skill.is_automated || skillId.startsWith('learned_')) ? HABIT_THRESHOLD : bestDist;
+
+                        if (dist < currentThreshold) {
                             bestSkill = skill;
+                            // Update bestDist only if it's a library skill (habits have a fixed cap)
+                            if (!skill.is_automated && !skillId.startsWith('learned_')) {
+                                bestDist = dist;
+                            }
                             const sign = adjustment >= 0 ? "+" : "";
                             matchDetails = `"${inputIntent}" ~ "${cv.text}" (raw=${rawDist}, biased=${Math.round(dist)}, pull=${sign}${Math.round(adjustment)})`;
                         }
@@ -299,10 +436,17 @@ class ProceduralMemory {
                 skillID: skillId,
                 description: draft.description,
                 trigger_intent: [draft.trigger_sample.toLowerCase()],
-                parameters: draft.params_sample || {}, // Phase 21: Capture specific tool params
+                parameters: draft.params_sample || {}, // Use captured params
                 steps: draft.sequence.map(action => {
-                    // Check if it's a known skill or needs custom wrapper
-                    return { type: "skill", name: action };
+                    // If the action is a skill itself, pass params through if they match
+                    const step = { type: "skill", name: action };
+                    if (draft.params_sample) {
+                        step.params = {};
+                        for (let k in draft.params_sample) {
+                            step.params[k] = `{${k}}`;
+                        }
+                    }
+                    return step;
                 }),
                 is_automated: true
             };
@@ -333,7 +477,6 @@ class ProceduralMemory {
     async execute(skillIdOrObj, context = {}, overrides = null) {
         let skill = skillIdOrObj;
 
-        // If string ID provided, look it up
         if (typeof skillIdOrObj === 'string') {
             skill = this.skills[skillIdOrObj];
         }
@@ -343,16 +486,26 @@ class ProceduralMemory {
             return false;
         }
 
-        // Phase 21: Merge overrides into effective parameters for this execution
         const effectiveParams = { ...(skill.parameters || {}), ...(overrides || {}) };
-
-        // Blue for Basal Ganglia/Skills
         console.log(`\x1b[34m[Basal Ganglia]\x1b[0m Executing Skill: ${skill.skillID}`);
-        global.LAST_ACTION_PARAMS = effectiveParams; // Capture for episodic log
+
+        // Phase 28: Update Usage Telemetry
+        if (!skill.performance) skill.performance = { usage_count: 0, reward_average: 0.5 };
+        skill.performance.usage_count++;
+
+        // Track for reward propagation (last non-meta skill usually)
+        if (!skill.skillID.startsWith('meta_')) {
+            this.lastSkillId = skill.skillID;
+        }
+
+        // Phase 28: Update History for Inhibition
+        this.skillHistory.unshift(skill.skillID);
+        if (this.skillHistory.length > 5) this.skillHistory.pop();
+
+        global.LAST_ACTION_PARAMS = effectiveParams;
 
         for (let step of skill.steps) {
             try {
-                // Phase 21: Resolve parameters if skill has them
                 if (effectiveParams && step.params) {
                     const resolvedParams = { ...step.params };
                     for (const key in resolvedParams) {
@@ -365,363 +518,373 @@ class ProceduralMemory {
                     step = { ...step, params: resolvedParams };
                 }
 
+                let success = true;
                 if (step.type === 'primitive') {
-                    if (step.action === 'log_output') {
-                        await this.outputBus.logOutput(step.params);
-
-                        // Phase 12: Log to Short-Term Memory if available
-                        if (context && context.stm) {
-                            context.stm.addInteraction('sentra', step.params.message);
-                        }
-
-                    } else if (step.action === 'wait') {
-                        await this.outputBus.wait(step.params);
-                    } else if (step.action === 'report_status') {
-                        // New Introspection Primitive
-                        if (context && context.homeostasis) {
-                            const energy = context.homeostasis.energy.toFixed(1);
-                            // Simple mood heuristic (based on energy/recent surprise?)
-                            let mood = "Neutral";
-                            if (energy > 80) mood = "Energetic / Curious";
-                            else if (energy < 40) mood = "Tired / Consolidating";
-
-                            const msg = `[Internal State] Energy: ${energy}% | Mood: ${mood}`;
-                            await this.outputBus.logOutput({ message: msg });
-
-                            if (context.stm) {
-                                context.stm.addInteraction('sentra', msg);
-                            }
-
-                        } else {
-                            await this.outputBus.logOutput({ message: "[Internal State] Unavailable (Context missing)" });
-                        }
-                    } else if (step.action === 'check_environment') {
-                        // Sensorium Primitive
-                        if (context && context.stm && context.stm.context.environmental_state) {
-                            const env = context.stm.context.environmental_state;
-                            const freeMemGB = (env.free_memory / (1024 * 1024 * 1024)).toFixed(2);
-                            const totalMemGB = (env.total_memory / (1024 * 1024 * 1024)).toFixed(2);
-
-                            const report = `[Sensorium] OS: ${env.platform} | Workspace: ${env.cwd} | Free Mem: ${freeMemGB}GB / ${totalMemGB}GB`;
-                            await this.outputBus.logOutput({ message: report });
-
-                            if (context.stm) {
-                                context.stm.addInteraction('sentra', report);
-                            }
-                        } else {
-                            await this.outputBus.logOutput({ message: "[Sensorium] Offline (Environmental state missing)" });
-                        }
-                    } else if (step.action === 'write_file') {
-                        // Motor Primitive: write_file
-                        // params: { path: "string", content: "string", append: boolean }
-                        try {
-                            const fs = require('fs');
-                            const targetPath = step.params.path || 'sentra_notes.txt';
-                            const content = step.params.content || '';
-                            const absolutePath = path.isAbsolute(targetPath) ? targetPath : path.join(__dirname, '..', targetPath);
-
-                            if (step.params.append) {
-                                fs.appendFileSync(absolutePath, content + '\n');
-                            } else {
-                                fs.writeFileSync(absolutePath, content);
-                            }
-                            
-                            const msg = `[Motor] Successfully wrote to ${targetPath}.`;
-                            await this.outputBus.logOutput({ message: msg });
-                            if (context.stm) context.stm.addInteraction('sentra', msg);
-                        } catch (err) {
-                            console.error("Motor Error (write_file):", err);
-                            await this.outputBus.logOutput({ message: `[Motor Error] Failed to write to file: ${err.message}` });
-                        }
-
-                    } else if (step.action === 'execute_shell') {
-                        // Motor Primitive: execute_shell
-                        // params: { command: "string" }
-                        // GATED: For v0.4, we use a simple whitelist or safety check
-                        try {
-                            const { execSync } = require('child_process');
-                            const cmd = step.params.command;
-                            
-                            // Safety Check: Avoid destructive commands
-                            const destructive = /rm -rf|del \/s|format|mkfs/i;
-                            if (destructive.test(cmd)) {
-                                throw new Error("Destructive command blocked by safety filter.");
-                            }
-
-                            const output = execSync(cmd, { encoding: 'utf8', timeout: 5000 });
-                            const msg = `[Motor] Command output: ${output.slice(0, 500)}${output.length > 500 ? '...' : ''}`;
-                            await this.outputBus.logOutput({ message: msg });
-                            if (context.stm) context.stm.addInteraction('sentra', msg);
-                        } catch (err) {
-                            console.error("Motor Error (execute_shell):", err);
-                            await this.outputBus.logOutput({ message: `[Motor Error] Command failed: ${err.message}` });
-                        }
-
-                    } else if (step.action === 'extract_fact') {
-                        // Primitive: extract_fact
-                        // params: { regex: "My name is (.*)", key: "name", confirm: "Nice to meet you, {value}." }
-                        if (context && context.stm) {
-                            const input = global.LAST_INPUT || ""; // We need access to raw input. 
-                            // Hack: retrieving input from stm buffer since main doesn't pass raw input globally easily, 
-                            // but actually context.stm.getLastUserMessage() is better.
-
-                            const lastMsg = context.stm.getLastUserMessage();
-                            if (lastMsg) {
-                                const re = new RegExp(step.params.regex, 'i');
-                                const match = lastMsg.text.match(re);
-                                if (match && match[1]) {
-                                    const value = match[1].trim();
-                                    context.stm.setFact(step.params.key, value);
-
-                                    let query = step.params.confirm || "Saved.";
-                                    query = query.replace("{value}", value);
-
-                                    await this.outputBus.logOutput({ message: query });
-                                    context.stm.addInteraction('sentra', query);
-                                }
-                            }
-                        }
-                    } else if (step.action === 'recall_fact') {
-                        // Primitive: recall_fact
-                        // params: { key: "name", template: "Your name is {value}.", fallback: "I don't know yet." }
-                        if (context && context.stm) {
-                            const value = context.stm.getFact(step.params.key);
-                            let msg = "";
-                            if (value) {
-                                msg = step.params.template.replace("{value}", value);
-                            } else {
-                                msg = step.params.fallback;
-                            }
-                            await this.outputBus.logOutput({ message: msg });
-                            context.stm.addInteraction('sentra', msg);
-                        }
-                    } else if (step.action === 'set_topic') {
-                        // Primitive: set_topic
-                        // params: { topic: "biology" }
-                        if (context && context.stm) {
-                            context.stm.setTopic(step.params.topic);
-
-                            // Optional: Confirm change
-                            const msg = `Topic set to: ${step.params.topic}`;
-                            await this.outputBus.logOutput({ message: msg });
-                            context.stm.addInteraction('sentra', msg);
-                        }
-                    } else if (step.action === 'set_focus') {
-                        // Primitive: set_focus
-                        // params: { entity: "Elon Musk" } (Or extracted via regex in future)
-                        if (context && context.stm) {
-                            context.stm.setFocus(step.params.entity);
-                        }
-                    } else if (step.action === 'recall_focus') {
-                        // Primitive: recall_focus
-                        // params: { template: "I think {value} is fascinating.", fallback: "Who are you referring to?" }
-                        if (context && context.stm) {
-                            const focus = context.stm.getFocus();
-                            let msg = "";
-                            if (focus) {
-                                msg = step.params.template.replace("{value}", focus);
-                            } else {
-                                msg = step.params.fallback;
-                            }
-                            await this.outputBus.logOutput({ message: msg });
-                            context.stm.addInteraction('sentra', msg);
-                        }
-                    } else if (step.action === 'learn_concept') {
-                        // Primitive: learn_concept
-                        // params: { confirm: "Understood." }
-                        // Challenge: We need the PREVIOUS user input (The Trigger) and CURRENT user input (The Definition).
-
-                        if (context && context.stm) {
-                            // Get last 2 user messages
-                            // buffer[-1] is current (definition)
-                            // buffer[-2] is trigger (unknown) ... wait, we might have Sentra's "I don't know" in between.
-
-                            // Let's implement a smarter lookup:
-                            // Look for the "Question" that triggered the "Unknown" state?
-                            // OR, rely on STM 'last_intent' if we logged "UNKNOWN_SKILL" there?
-
-                            // Simpler approach for v0.4:
-                            // The user just typed the definition.
-                            // The previous user input was the trigger.
-                            // buffer: [User: "What is quark?"], [Sentra: "I don't know."], [User: "A particle."]
-
-                            const history = context.stm.buffer;
-                            let definition = null;
-                            let trigger = null;
-
-                            // Scan backwards
-                            let userCount = 0;
-                            for (let i = history.length - 1; i >= 0; i--) {
-                                if (history[i].role === 'user') {
-                                    userCount++;
-                                    if (userCount === 1) definition = history[i].text;
-                                    if (userCount === 2) {
-                                        trigger = history[i].text;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (trigger && definition) {
-                                // LEARN IT!
-                                this.learnSkill(trigger, definition, context.perception); // Use perception from context if passed
-                                this.cacheSkillVectors(context.perception); // Immediate vector update
-
-                                const msg = step.params.confirm || "I have learned that.";
-                                await this.outputBus.logOutput({ message: msg });
-                                context.stm.addInteraction('sentra', msg);
-                            } else {
-                                await this.outputBus.logOutput({ message: "I lost my train of thought. What were we defining?" });
-                            }
-                        }
-                    } else if (step.action === 'learn_fact') {
-                        // Primitive: learn_fact (Phase 17)
-                        // Context: User said "X is Y" or "A X is a Y"
-                        // We need to parse this. For v0.4, we'll use a simple regex heuristic on the LAST user message.
-
-                        if (context && context.stm) {
-                            const lastUserMsg = context.stm.getLastUserMessage();
-                            if (lastUserMsg) {
-                                const text = lastUserMsg.text.trim();
-
-                                // FIX: Do not learn from questions
-                                if (text.endsWith('?')) {
-                                    await this.outputBus.logOutput({ message: "I cannot learn facts from questions. Please state it as a fact." });
-                                    return;
-                                }
-
-                                // Regex for "A [Subject] is a [Object]" or "[Subject] is [Object]"
-                                // Improved to enforce word boundaries for articles (\b prevents "an" becoming "a" + "n")
-                                const match = text.match(/^(?:(?:a|an)\b\s+)?(.+?)\s+is\s+(?:(?:a|an)\b\s+)?(.+)/i);
-
-                                if (match) {
-                                    const subject = match[1].toLowerCase().trim();
-                                    const objectRaw = match[2].toLowerCase().trim();
-                                    const object = objectRaw.replace(/[.!?]+$/, ""); // Sanitize punctuation
-
-                                    // 1. Get/Create Nodes
-                                    const semantic = require('../memory_systems/semantic');
-
-                                    if (context.semantic) {
-                                        const subId = await context.semantic.getOrCreateNode(subject, 'Concept');
-                                        const objId = await context.semantic.getOrCreateNode(object, 'Concept');
-
-                                        // 2. Add Edge
-                                        await context.semantic.addEdge(subId, objId, 'is_a');
-
-                                        const msg = `I have updated my internal model: [${subject}] -> is_a -> [${object}]`;
-                                        await this.outputBus.logOutput({ message: msg });
-                                        context.stm.addInteraction('sentra', msg);
-                                    } else {
-                                        console.error("Semantic module not passed to execute context.");
-                                    }
-
-                                } else {
-                                    await this.outputBus.logOutput({ message: "I couldn't parse the fact structure. Try 'X is Y'." });
-                                }
-                            }
-                        }
-                    } else if (step.action === 'explain_concept') {
-                        // Primitive: explain_concept (Phase 17.5 Recursive)
-                        // Context: "What is X?"
-
-                        if (context && context.stm && context.semantic) {
-                            const lastUserMsg = context.stm.getLastUserMessage();
-                            if (lastUserMsg) {
-                                const text = lastUserMsg.text;
-                                const match = text.match(/what is (?:(?:a|an)\b\s+)?(.+)\?/i);
-
-                                if (match) {
-                                    const label = match[1].toLowerCase().trim().replace(/[.!?]+$/, "");
-
-                                    // RECURSIVE INFERENCE
-                                    const getFullDescription = async (currentLabel, depth = 0, explored = new Set()) => {
-                                        if (depth > 3 || explored.has(currentLabel)) return [];
-                                        explored.add(currentLabel);
-
-                                        const node = await context.semantic.getNodeByLabel(currentLabel);
-                                        if (!node) return [];
-
-                                        const edges = await context.semantic.getRelated(node.node_id);
-                                        let results = [];
-                                        for (const edge of edges) {
-                                            results.push({ relation: edge.relation, target: edge.label });
-                                            if (edge.relation === 'is_a') {
-                                                const inherited = await getFullDescription(edge.label, depth + 1, explored);
-                                                results = results.concat(inherited);
-                                            }
-                                        }
-                                        return results;
-                                    };
-
-                                    const relations = await getFullDescription(label);
-
-                                    if (relations.length > 0) {
-                                        // Deduplicate and format relations
-                                        const uniqueEntries = Array.from(new Set(relations.map(r => `${r.relation.replace('_', ' ')} ${r.target}`)));
-                                        const msg = `${label} ${uniqueEntries.join(', ')}.`;
-                                        await this.outputBus.logOutput({ message: msg });
-                                        context.stm.addInteraction('sentra', msg);
-                                    } else {
-                                        const node = await context.semantic.getNodeByLabel(label);
-                                        if (node) {
-                                            await this.outputBus.logOutput({ message: `I know about ${label}, but I have no relations defined.` });
-                                        } else {
-                                            await this.outputBus.logOutput({ message: `I do not have a record of ${label} in my Knowledge Graph.` });
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else if (step.action === 'adjust_reward') {
-                        // Primitive: adjust_reward (Phase 18.2)
-                        // Context: "Yes", "Wrong", "Good job"
-                        // Finds the PREVIOUS episode and updates its reward.
-
-                        if (context && context.homeostasis && context.homeostasis.episodic) {
-                            const rewardValue = step.params.value ?? 0.5;
-                            const episodic = context.homeostasis.episodic;
-
-                            // Get last episode (the one to be rewarded)
-                            const recent = await episodic.getRecent(1);
-                            if (recent && recent.length > 0) {
-                                const epId = recent[0].episode_id;
-                                console.log(`\x1b[33m[Reward System]\x1b[0m Updating Reward for Ep ${epId} to ${rewardValue}`);
-                                await episodic.updateReward(epId, rewardValue);
-
-                                const msg = step.params.confirm || (rewardValue > 0.5 ? "I will remember that I did well." : "I will learn from this mistake.");
-                                await this.outputBus.logOutput({ message: msg });
-                                context.stm.addInteraction('sentra', msg);
-                            } else {
-                                console.warn(`\x1b[31m[Reward System]\x1b[0m No recent episode found to reward.`);
-                                await this.outputBus.logOutput({ message: "I have no recent memories to reflect on." });
-                            }
-                        }
-                    } else if (step.action === 'meta_reflect') {
-                        // Phase 22: Narrative Reflection
-                        if (context && context.narrative) {
-                            const achievement = step.params.achievement || "Reflected on recent activities.";
-                            await context.narrative.addAchievement(achievement);
-                            console.log(`\x1b[32m[Ego]\x1b[0m Story updated: ${achievement}`);
-                        }
-                    } else if (step.action === 'log_thought') {
-                        // Phase 22: Inner Monologue (Latent)
-                        const thought = step.params.thought || "...thinking...";
-                        console.log(`\x1b[33m[Thought]\x1b[0m ${thought}`);
-                        // No output to the user, this is internal.
-                    } else {
-                        console.warn(`Unknown primitive action: ${step.action}`);
-                    }
+                    success = await this.executePrimitive(step, context, skill);
                 } else if (step.type === 'skill') {
-                    // Hierarchical Call (Phase 21: Pass parameters down the chain)
-                    const subParams = { ...skill.parameters, ...step.params }; // Merge parent params + any specific step params
-                    await this.execute(step.name, context, subParams); 
+                    const subParams = { ...skill.parameters, ...step.params };
+                    success = await this.execute(step.name, context, subParams);
+                }
+
+                if (success === false) {
+                    console.log(`\x1b[33m[Basal Ganglia]\x1b[0m Step failed. Breaking chain for ${skill.skillID}`);
+                    return false;
                 }
             } catch (err) {
                 console.error(`Error executing step in ${skill.skillID}:`, err);
+                return false;
             }
         }
         return true;
+    }
+
+    /**
+     * Phase 27: Centralized Primitive Execution
+     * Returns true on success, false on failure (to break chain).
+     */
+    async executePrimitive(step, context, parentSkill) {
+        try {
+            if (step.action === 'log_output') {
+                await this.outputBus.logOutput(step.params);
+                if (context && context.stm) context.stm.addInteraction('sentra', step.params.message);
+                return true;
+            } else if (step.action === 'wait') {
+                await this.outputBus.wait(step.params);
+                return true;
+            } else if (step.action === 'report_status') {
+                if (context && context.homeostasis) {
+                    const energy = context.homeostasis.energy.toFixed(1);
+                    const msg = `[Internal State] Energy: ${energy}%`;
+                    await this.outputBus.logOutput({ message: msg });
+                    if (context.stm) context.stm.addInteraction('sentra', msg);
+                    return true;
+                }
+                return false;
+            } else if (step.action === 'check_environment') {
+                if (context && context.stm && context.stm.context.environmental_state) {
+                    const env = context.stm.context.environmental_state;
+                    const freeMemGB = (env.free_memory / (1024 * 1024 * 1024)).toFixed(2);
+                    const report = `[Sensorium] OS: ${env.platform} | Workspace: ${env.cwd} | Free Mem: ${freeMemGB}GB`;
+                    await this.outputBus.logOutput({ message: report });
+                    if (context.stm) context.stm.addInteraction('sentra', report);
+                    return true;
+                }
+                return false;
+            } else if (step.action === 'learn_fact') {
+                if (context && context.stm) {
+                    const lastUserMsg = context.stm.getContext().recent_history.filter(m => m.role === 'user').pop();
+                    if (lastUserMsg) {
+                        const text = lastUserMsg.text.trim();
+                        if (text.endsWith('?')) return false;
+                        const match = text.match(/^(?:(?:a|an)\b\s+)?(.+?)\s+is\s+(?:(?:a|an)\b\s+)?(.+)/i);
+                        if (match) {
+                            const subject = match[1].toLowerCase().trim();
+                            const object = match[2].toLowerCase().trim().replace(/[.!?]+$/, "");
+                            if (context.semantic) {
+                                // Phase 29: Sovereign Anchor Check (Dilation)
+                                const existingNode = await context.semantic.getNodeByLabel(subject);
+                                if (existingNode && existingNode.is_locked) {
+                                    console.log(`\x1b[35m[Dilation]\x1b[0m Node "${subject}" is locked. Allowing additive expansion...`);
+                                }
+
+                                const subId = await context.semantic.getOrCreateNode(subject, 'Concept');
+                                const objId = await context.semantic.getOrCreateNode(object, 'Concept');
+                                await context.semantic.addEdge(subId, objId, 'is_a');
+                                const msg = `I have updated my internal model: [${subject}] -> is_a -> [${object}]`;
+                                await this.outputBus.logOutput({ message: msg });
+                                context.stm.addInteraction('sentra', msg);
+
+                                // Record as a belief node for later consolidation and confidence tracking
+                                try {
+                                    const proposition = `${subject} is ${object}`;
+                                    // initial confidence from direct user teaching
+                                    await context.semantic.addBelief(proposition, 0.75, 'user', subId);
+                                } catch (e) {
+                                    // ignore belief recording errors
+                                }
+
+                                return true;
+                            }
+                        }
+                    }
+                }
+                await this.outputBus.logOutput({ message: "I couldn't parse the fact structure. Try 'X is Y'." });
+                return false;
+            } else if (step.action === 'synthesize') {
+                const label = step.params.nodeLabel || step.params.subject;
+                if (!label) return false;
+
+                const response = await this.synthesizeSentence(label, context);
+                await this.outputBus.logOutput({ message: response });
+                if (context && context.stm) context.stm.addInteraction('sentra', response);
+                return true;
+            } else if (step.action === 'explain_concept') {
+                // Phase 17.5 & 29: Transitive Reasoning (Inference)
+                if (context && context.stm && context.semantic) {
+                    const history = context.stm.getContext().recent_history.filter(m => m.role === 'user').reverse();
+                    let match = null;
+                    let label = null;
+
+                    for (const msg of history) {
+                        match = msg.text.match(/(?:what|who|explain|tell me about) (?:is|are|about|is a|is an) (?:(?:a|an|the)\b\s+)?(.+)\?/i) ||
+                            msg.text.match(/^(?:explain|describe|tell me about) (.+)/i);
+                        if (match) {
+                            label = match[1].toLowerCase().trim().replace(/[.!?]+$/, "");
+                            break;
+                        }
+                    }
+
+                    if (label) {
+                        // Phase 28/29: Pronoun Resolution
+                        const alias = await context.semantic.resolveAlias(label);
+                        if (alias) label = alias.canonical_label;
+
+                        // Use synthesis engine for explanation
+                        const response = await this.synthesizeSentence(label, context);
+                        await this.outputBus.logOutput({ message: response });
+                        if (context.stm) context.stm.addInteraction('sentra', response);
+                        return true;
+                    }
+                }
+                return false;
+            }
+            else if (step.action === 'summarize_text') {
+                // Layer 3: Summarization
+                const textToSummarize = step.params.text || (context.stm ? context.stm.getContext().recent_history[0]?.text : "");
+                if (textToSummarize) {
+                    const words = textToSummarize.split(/\s+/);
+                    if (words.length > 20) {
+                        const summary = words.slice(0, 15).join(' ') + "... [Condensate]";
+                        await this.outputBus.logOutput({ message: `Summary: ${summary}` });
+                        return true;
+                    }
+                }
+                return false;
+            } else if (step.action === 'compare_concepts') {
+                // Layer 3: Comparison logic
+                const { conceptA, conceptB } = step.params;
+                if (context.semantic && conceptA && conceptB) {
+                    const nodeA = await context.semantic.getNodeByLabel(conceptA.toLowerCase());
+                    const nodeB = await context.semantic.getNodeByLabel(conceptB.toLowerCase());
+                    if (nodeA && nodeB) {
+                        const relsA = await context.semantic.getRelated(nodeA.node_id);
+                        const relsB = await context.semantic.getRelated(nodeB.node_id);
+                        const shared = relsA.filter(rA => relsB.some(rB => rB.label === rA.label && rB.relation === rA.relation));
+                        const diffA = relsA.filter(rA => !relsB.some(rB => rB.label === rA.label));
+                        const diffB = relsB.filter(rB => !relsA.some(rA => rA.label === rB.label));
+
+                        let msg = `Comparison [${conceptA} vs ${conceptB}]: `;
+                        if (shared.length > 0) msg += `Shared: ${shared.map(s => s.label).join(', ')}. `;
+                        if (diffA.length > 0) msg += `${conceptA} unique: ${diffA.map(d => d.label).join(', ')}. `;
+                        if (diffB.length > 0) msg += `${conceptB} unique: ${diffB.map(d => d.label).join(', ')}. `;
+                        await this.outputBus.logOutput({ message: msg });
+                        return true;
+                    }
+                }
+                return false;
+            } else if (step.action === 'critique_result') {
+                // Layer 3: Self-Critique
+                const lastResponse = context.stm ? context.stm.getContext().recent_history.find(m => m.role === 'sentra')?.text : null;
+                if (lastResponse) {
+                    const evaluation = lastResponse.length > 100 ? "Response is comprehensive." : "Response is concise but may lack depth.";
+                    await this.outputBus.logOutput({ message: `[Critique] ${evaluation}` });
+                    return true;
+                }
+                return false;
+            } else if (step.action === 'adjust_reward') {
+                if (context && context.homeostasis && context.homeostasis.episodic) {
+                    const rewardValue = step.params.value ?? 0.5;
+                    const recent = await context.homeostasis.episodic.getRecent(1);
+                    if (recent && recent.length > 0) {
+                        await context.homeostasis.episodic.updateReward(recent[0].episode_id, rewardValue);
+
+                        // Phase 28: Propagate to in-memory Procedural Memory for SBI synchronization
+                        const targetSkillId = this.lastSkillId;
+                        if (targetSkillId && this.skills[targetSkillId]) {
+                            const skill = this.skills[targetSkillId];
+                            if (!skill.performance) skill.performance = { reward_average: 0.5, usage_count: 1 };
+
+                            // Moving Average: W_new = W_old * 0.8 + Reward * 0.2
+                            skill.performance.reward_average = (skill.performance.reward_average * 0.8) + (rewardValue * 0.2);
+                            console.log(`\x1b[34m[Basal Ganglia]\x1b[0m Propagated reward ${rewardValue.toFixed(2)} to skill: ${targetSkillId} (New Avg: ${skill.performance.reward_average.toFixed(2)})`);
+
+                            // Persist if it's a learned skill
+                            if (targetSkillId.startsWith('learned_') || targetSkillId.startsWith('auto_')) {
+                                this.saveLearnedSkills();
+                            }
+                        }
+
+                        await this.outputBus.logOutput({ message: step.params.confirm || "Reinforcement noted." });
+                        return true;
+                    }
+                }
+                return false;
+            } else if (step.action === 'meta_reflect') {
+                if (context && context.narrative) {
+                    await context.narrative.addAchievement(step.params.achievement || "Reflection.");
+                    return true;
+                }
+                return false;
+            } else if (step.action === 'log_thought') {
+                console.log(`\x1b[33m[Thought]\x1b[0m ${step.params.thought || "...thinking..."}`);
+                return true;
+            } else if (step.action === 'write_file') {
+                const fs = require('fs');
+                const targetPath = step.params.path || 'sentra_notes.txt';
+                const absolutePath = path.isAbsolute(targetPath) ? targetPath : path.join(__dirname, '..', targetPath);
+                if (step.params.append) fs.appendFileSync(absolutePath, step.params.content + '\n');
+                else fs.writeFileSync(absolutePath, step.params.content);
+                return true;
+            } else if (step.action === 'execute_shell') {
+                const { execSync } = require('child_process');
+                const cmd = step.params.command;
+                // Hardened whitelist
+                const safeWhitelist = /^(dir|ls|echo|cd|status|report|whoami|pwd|date|time)/i;
+                const destructive = /rm -rf|del \/s|format|mkfs|truncate|\>|\||\&/i;
+
+                if (!safeWhitelist.test(cmd.split(' ')[0]) || destructive.test(cmd)) {
+                    console.warn(`[Basal Ganglia] Blocked unsafe shell command: ${cmd}`);
+                    return false;
+                }
+
+                try {
+                    const output = execSync(cmd, { timeout: 5000 }).toString(); // 5s timeout
+                    await this.outputBus.logOutput({ message: `[Motor] Output:\n${output}` });
+                    return true;
+                } catch (e) {
+                    console.error("Shell execution failed:", e.message);
+                    return false;
+                }
+            } else if (step.action === 'extract_fact') {
+                if (context && context.stm) {
+                    const lastMsg = context.stm.getLastUserMessage();
+                    if (lastMsg) {
+                        const re = new RegExp(step.params.regex, 'i');
+                        const match = lastMsg.text.match(re);
+                        if (match && match[1]) {
+                            const value = match[1].trim();
+                            context.stm.setFact(step.params.key, value);
+                            const query = (step.params.confirm || "Saved.").replace("{value}", value);
+                            await this.outputBus.logOutput({ message: query });
+                            context.stm.addInteraction('sentra', query);
+                        }
+                    }
+                }
+                return true;
+            } else if (step.action === 'recall_fact') {
+                if (context && context.stm) {
+                    const value = context.stm.getFact(step.params.key);
+                    const msg = value ? step.params.template.replace("{value}", value) : step.params.fallback;
+                    await this.outputBus.logOutput({ message: msg });
+                    context.stm.addInteraction('sentra', msg);
+                }
+                return true;
+            } else if (step.action === 'set_topic') {
+                if (context && context.stm) {
+                    context.stm.setTopic(step.params.topic);
+                    const msg = `Topic set to: ${step.params.topic}`;
+                    await this.outputBus.logOutput({ message: msg });
+                    context.stm.addInteraction('sentra', msg);
+                }
+                return true;
+            } else if (step.action === 'set_focus') {
+                if (context && context.stm) context.stm.setFocus(step.params.entity);
+                return true;
+            } else if (step.action === 'recall_focus') {
+                if (context && context.stm) {
+                    const focus = context.stm.getFocus();
+                    const msg = focus ? step.params.template.replace("{value}", focus) : step.params.fallback;
+                    await this.outputBus.logOutput({ message: msg });
+                    context.stm.addInteraction('sentra', msg);
+                }
+                return true;
+            } else if (step.action === 'learn_concept') {
+                if (context && context.stm) {
+                    const history = context.stm.buffer;
+                    let definition = null, trigger = null;
+                    let userCount = 0;
+                    for (let i = history.length - 1; i >= 0; i--) {
+                        if (history[i].role === 'user') {
+                            userCount++;
+                            if (userCount === 1) definition = history[i].text;
+                            if (userCount === 2) { trigger = history[i].text; break; }
+                        }
+                    }
+                    if (trigger && definition) {
+                        this.learnSkill(trigger, definition, context.perception);
+                        this.cacheSkillVectors(context.perception);
+                        const msg = step.params.confirm || "I have learned that.";
+                        await this.outputBus.logOutput({ message: msg });
+                        context.stm.addInteraction('sentra', msg);
+                    } else {
+                        await this.outputBus.logOutput({ message: "I lost my train of thought." });
+                    }
+                }
+            } else if (step.action === 'report_identity') {
+                if (context && context.narrative) {
+                    const id = context.narrative.getIdentity();
+                    const arc = context.narrative.getNarrative();
+                    if (id && arc) {
+                        const msg = `I am ${id.name} (v${id.version}). My current operative state is "${arc.current_state}". My core directive: ${id.core_directive}`;
+                        await this.outputBus.logOutput({ message: msg });
+                        if (context.stm) context.stm.addInteraction('sentra', msg);
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return true;
+        } catch (e) {
+            console.error("Primitive Error:", e);
+            return false;
+        }
+    }
+
+    /**
+     * Data-Driven Natural Language Synthesis
+     * Generates a sentence by traversing the Knowledge Graph.
+     * Adheres to the Tabula Rasa principle: forms words from facts.
+     */
+    async synthesizeSentence(subject, context) {
+        if (!context || !context.semantic) return `I know of ${subject}.`;
+
+        const node = await context.semantic.getNodeByLabel(subject.toLowerCase());
+        if (!node) return `I have no memory of ${subject}.`;
+
+        const rels = await context.semantic.getRelationships(node.node_id);
+        if (rels.length === 0) {
+            // Identity Fallback: Query narrative memory if it's the core self
+            const identityLabels = ['sentra', 'self', 'me'];
+            if (identityLabels.includes(subject.toLowerCase())) {
+                const NarrativeMemory = require('./narrative');
+                await NarrativeMemory.init();
+                return NarrativeMemory.getBaseContext();
+            }
+            return `${subject} is a recognized concept with no further associations.`;
+        }
+
+        // Simple Template-Based Synthesis
+        // "Subject [is_a] Object" -> "Subject is a Object"
+        const facts = rels.map(r => {
+            const rel = r.rel_type || r.relation;
+            let template = "[S] [R] [O]";
+            if (rel === 'is_a') template = "[S] is a [O]";
+            if (rel === 'created_by') template = "[S] was created by [O]";
+            if (rel === 'requires') template = "[S] requires [O]";
+
+            return template
+                .replace("[S]", subject.charAt(0).toUpperCase() + subject.slice(1))
+                .replace("[R]", rel ? rel.replace(/_/g, ' ') : "is associated with")
+                .replace("[O]", r.label || r.target_label || "concept");
+        });
+
+        console.log(`\x1b[35m[SYNTHESIS]\x1b[0m Synthesizing response from ${facts.length} core facts about "${subject}".`);
+
+        if (facts.length === 1) return facts[0] + ".";
+        if (facts.length === 2) return facts.join(" and ") + ".";
+
+        const last = facts.pop();
+        return facts.join(", ") + ", and " + last + ".";
     }
 }
 

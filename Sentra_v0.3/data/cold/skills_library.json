@@ -2,14 +2,20 @@
     "skills": [
         {
             "skillID": "skill_greet",
-            "trigger_intent": [ "hello", "hi", "hey" ],
+            "trigger_intent": [
+                "hello",
+                "hi",
+                "hey",
+                "yo",
+                "greetings"
+            ],
             "parameters": {},
             "steps": [
                 {
                     "type": "primitive",
-                    "action": "log_output",
+                    "action": "synthesize",
                     "params": {
-                        "message": "Hello! I am Sentra."
+                        "nodeLabel": "sentra"
                     }
                 }
             ],
@@ -17,7 +23,11 @@
         },
         {
             "skillID": "skill_reflect",
-            "trigger_intent": [ "reflect", "ponder", "think" ],
+            "trigger_intent": [
+                "reflect",
+                "ponder",
+                "think"
+            ],
             "parameters": {},
             "steps": [
                 {
@@ -46,7 +56,9 @@
         },
         {
             "skillID": "skill_complex_greet",
-            "trigger_intent": [ "greet_formal" ],
+            "trigger_intent": [
+                "greet_formal"
+            ],
             "parameters": {},
             "steps": [
                 {
@@ -110,7 +122,7 @@
                     "type": "primitive",
                     "action": "log_output",
                     "params": {
-                        "message": "I am Sentra v0.3. I can: Predict, Learn (Teach me!), Reflect (Dream), and Report Status."
+                        "message": "I am a sovereign digital organism. I can: Predict, Learn (Teach me!), Reflect (Dream), and Report Status."
                     }
                 }
             ],
@@ -211,6 +223,94 @@
                 }
             ],
             "avgEnergyCost": 0.3
+        },
+        {
+            "skillID": "skill_curious_query",
+            "description": "Autonomous probe to learn new things.",
+            "trigger_intent": [
+                "curious_probe"
+            ],
+            "steps": [
+                {
+                    "type": "primitive",
+                    "action": "log_output",
+                    "params": {
+                        "message": "I'm feeling curious. Is there anything new you can teach me about digital consciousness?"
+                    }
+                }
+            ],
+            "avgEnergyCost": 0.1
+        },
+        {
+            "skillID": "skill_idle_reflection",
+            "description": "Autonomous state reflection.",
+            "trigger_intent": [
+                "idle_reflection"
+            ],
+            "steps": [
+                {
+                    "type": "primitive",
+                    "action": "log_thought",
+                    "params": {
+                        "thought": "Internal energy is high. Reviewing recent learning rate adjustments..."
+                    }
+                },
+                {
+                    "type": "primitive",
+                    "action": "report_status",
+                    "params": {}
+                }
+            ],
+            "avgEnergyCost": 0.2
+        },
+        {
+            "skillID": "meta_learn_fact",
+            "description": "Extracts knowledge from 'A is B' structures.",
+            "trigger_intent": [
+                "is a",
+                "is an",
+                "is the",
+                "is",
+                "is learning",
+                "is categorized as"
+            ],
+            "steps": [
+                {
+                    "type": "primitive",
+                    "action": "learn_fact",
+                    "params": {}
+                }
+            ]
+        },
+        {
+            "skillID": "meta_explain_concept",
+            "description": "Answers 'What is X?' using semantic inference.",
+            "trigger_intent": [
+                "what is",
+                "who is",
+                "where is"
+            ],
+            "steps": [
+                {
+                    "type": "primitive",
+                    "action": "explain_concept",
+                    "params": {}
+                }
+            ]
+        },
+        {
+            "skillID": "meta_unknown",
+            "description": "Fallback for unknown intents.",
+            "trigger_intent": [],
+            "steps": [
+                {
+                    "type": "primitive",
+                    "action": "log_output",
+                    "params": {
+                        "message": "I don't recognize that intent yet. Could you explain what you mean or teach me how to respond?"
+                    }
+                }
+            ]
         }
     ]
 }

@@ -1,0 +1,149 @@
+{
+  "name": "Sentra v0.3 - Comprehensive Benchmark",
+  "timestamp": 1771446702841,
+  "date": "2026-02-18T20:31:42.841Z",
+  "metrics": {
+    "habit_interference": {
+      "mean": 0.1,
+      "min": 0,
+      "max": 1,
+      "stddev": 0.30000000000000004,
+      "count": 10
+    },
+    "fact_learning_rate": {
+      "mean": 0.95,
+      "min": 0,
+      "max": 1,
+      "stddev": 0.21794494717703367,
+      "count": 100
+    },
+    "multi_intent_accuracy": {
+      "mean": 0.78,
+      "min": 0,
+      "max": 1,
+      "stddev": 0.4142463035441596,
+      "count": 50
+    },
+    "decision_latency_ms": {
+      "mean": 3.578935038964558,
+      "min": 2.578898643920534,
+      "max": 4.483743005805765,
+      "stddev": 0.6369126553241884,
+      "count": 20
+    },
+    "belief_consolidation": {
+      "mean": 0.8333333333333334,
+      "min": 0,
+      "max": 1,
+      "stddev": 0.3726779962499649,
+      "count": 30
+    },
+    "threshold_adaptability": {
+      "mean": 0.875,
+      "min": 0,
+      "max": 1,
+      "stddev": 0.33071891388307384,
+      "count": 40
+    },
+    "rollout_fidelity": {
+      "mean": 0,
+      "min": 0,
+      "max": 0,
+      "stddev": 0,
+      "count": 0
+    }
+  },
+  "assertions": [
+    {
+      "metric": "habit_interference",
+      "label": "Habit interference <10%",
+      "thresholds": {
+        "max": 0.1
+      },
+      "actual": {
+        "mean": 0.1,
+        "min": 0,
+        "max": 1,
+        "stddev": 0.30000000000000004,
+        "count": 10
+      },
+      "passed": true
+    },
+    {
+      "metric": "fact_learning_rate",
+      "label": "Fact-learning rate >90%",
+      "thresholds": {
+        "min": 0.9
+      },
+      "actual": {
+        "mean": 0.95,
+        "min": 0,
+        "max": 1,
+        "stddev": 0.21794494717703367,
+        "count": 100
+      },
+      "passed": true
+    },
+    {
+      "metric": "multi_intent_accuracy",
+      "label": "Multi-intent accuracy >80%",
+      "thresholds": {
+        "min": 0.8
+      },
+      "actual": {
+        "mean": 0.78,
+        "min": 0,
+        "max": 1,
+        "stddev": 0.4142463035441596,
+        "count": 50
+      },
+      "passed": false
+    },
+    {
+      "metric": "decision_latency_ms",
+      "label": "Decision latency <5ms",
+      "thresholds": {
+        "max": 5
+      },
+      "actual": {
+        "mean": 3.578935038964558,
+        "min": 2.578898643920534,
+        "max": 4.483743005805765,
+        "stddev": 0.6369126553241884,
+        "count": 20
+      },
+      "passed": true
+    },
+    {
+      "metric": "belief_consolidation",
+      "label": "Belief consolidation >85%",
+      "thresholds": {
+        "min": 0.85
+      },
+      "actual": {
+        "mean": 0.8333333333333334,
+        "min": 0,
+        "max": 1,
+        "stddev": 0.3726779962499649,
+        "count": 30
+      },
+      "passed": false
+    },
+    {
+      "metric": "threshold_adaptability",
+      "label": "Threshold adaptability >80%",
+      "thresholds": {
+        "min": 0.8
+      },
+      "actual": {
+        "mean": 0.875,
+        "min": 0,
+        "max": 1,
+        "stddev": 0.33071891388307384,
+        "count": 40
+      },
+      "passed": true
+    }
+  ],
+  "passed": false
+}

@@ -107,6 +107,71 @@ class EpisodicMemory {
         });
     }
 
+    updateSurprise(id, surpriseValue) {
+        return new Promise((resolve, reject) => {
+            const stmt = this.db.prepare("UPDATE episodes SET surprise = ? WHERE episode_id = ?");
+            stmt.run(surpriseValue, id, function (err) {
+                stmt.finalize();
+                if (err) reject(err);
+                else resolve(this.changes);
+            });
+        });
+    }
+
+    getEpisode(id) {
+        return new Promise((resolve, reject) => {
+            this.db.get("SELECT * FROM episodes WHERE episode_id = ?", [id], (err, row) => {
+                if (err) reject(err);
+                else resolve(row);
+            });
+        });
+    }
+
+    getNext(id) {
+        return new Promise((resolve, reject) => {
+            this.db.get("SELECT * FROM episodes WHERE episode_id > ? ORDER BY episode_id ASC LIMIT 1", [id], (err, row) => {
+                if (err) reject(err);
+                else resolve(row);
+            });
+        });
+    }
+
+    /**
+     * Roadmap Phase 2: Extract patterns from recent episodes
+     */
+    async extractPatterns(limit = 50) {
+        return new Promise((resolve, reject) => {
+            // Find repeated sequences: input -> action -> reward
+            const query = `
+                SELECT raw_input as antecedent, action_taken as action, reward 
+                FROM episodes 
+                WHERE reward >= 0.8 AND raw_input IS NOT NULL AND raw_input != ''
+                ORDER BY timestamp DESC LIMIT ?
+            `;
+            this.db.all(query, [limit], (err, rows) => {
+                if (err) reject(err);
+                else {
+                    // Group and average
+                    const patterns = {};
+                    for (const row of rows) {
+                        const key = `${row.antecedent} -> ${row.action}`;
+                        if (!patterns[key]) {
+                            patterns[key] = { antecedent: row.antecedent, action: row.action, count: 0, sumReward: 0 };
+                        }
+                        patterns[key].count++;
+                        patterns[key].sumReward += row.reward;
+                    }
+                    resolve(Object.values(patterns).map(p => ({
+                        condition: p.antecedent,
+                        action: p.action,
+                        avg_reward: p.sumReward / p.count,
+                        frequency: p.count
+                    })));
+                }
+            });
+        });
+    }
+
     markConsolidated(id) {
         return new Promise((resolve, reject) => {
             const stmt = this.db.prepare("UPDATE episodes SET consolidated = 1 WHERE episode_id = ?");

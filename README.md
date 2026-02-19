@@ -20,5 +20,20 @@ Sentra follows the "DNA vs. Brain Matter" split:
 
 Sentra starts as a *Tabula Rasa* (Empty Brain) and learns entirely through its interactions with the Creator.
 
+## Quick Start
+
+To launch Sentra with the Brain Inspector:
+```bash
+sen
+```
+
+### CLI Options
+- `sen`: Smart launch (Core + Inspector).
+- `sen --force`: Kill stalled background inspector sessions and restart.
+- `sen --sbi`: Launch the Inspector only (useful if Core is already running).
+- `sen --all`: Run the Sleep/Consolidation cycle before launching Core.
+- `sen --reset`: Wipe temporary cognitive context (Hot Memory).
+- `sen --help`: Show all diagnostic flags.
+
 ---
 *Created by Baihaki*

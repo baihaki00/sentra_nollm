@@ -1,87 +1,366 @@
 [
   {
-    "draftID": "draft_1771431473375_7",
-    "description": "Automated sequence following: \"what are you doing?\"",
-    "trigger_sample": "what are you doing?",
+    "draftID": "test_draft_persist_1",
+    "trigger_sample": "persist me please",
+    "description": "Test draft for inhibited persistence",
+    "sequence": [
+      "skill_test_a",
+      "skill_test_b"
+    ]
+  },
+  {
+    "draftID": "hebb_1771448822017",
+    "description": "Hebbian promotion of pattern: skill_status->meta_feedback_positive",
+    "trigger_sample": "check files",
+    "sequence": [
+      "skill_status",
+      "meta_feedback_positive"
+    ],
+    "reward_score": 1,
+    "hebbian": true
+  },
+  {
+    "draftID": "draft_1771455281458_3",
+    "description": "Automated sequence following: \"who are you?\"",
+    "trigger_sample": "who are you?",
     "sequence": [
       "learned_bootstrap_1771373708184_741",
       "meta_feedback_positive"
     ],
     "params_sample": {},
-    "reward_score": 0.75
+    "reward_score": 1
   },
   {
-    "draftID": "draft_1771431635796_1",
-    "description": "Automated sequence following: \"what is sentra?\"",
-    "trigger_sample": "what is sentra?",
+    "draftID": "draft_1771455281458_10",
+    "description": "Automated sequence following: \"How are you doing?\"",
+    "trigger_sample": "How are you doing?",
     "sequence": [
-      "meta_query_fact",
+      "learned_1771372332822",
       "meta_feedback_positive"
     ],
     "params_sample": {},
     "reward_score": 0.75
   },
   {
-    "draftID": "draft_1771432162080_1",
-    "description": "Automated sequence following: \"What is DNA?\"",
-    "trigger_sample": "What is DNA?",
+    "draftID": "draft_1771455281458_17",
+    "description": "Automated sequence following: \"list files\"",
+    "trigger_sample": "list files",
     "sequence": [
-      "meta_query_fact",
+      "skill_files",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {
+      "command": "dir"
+    },
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771455498737_6",
+    "description": "Automated sequence following: \"show me files\"",
+    "trigger_sample": "show me files",
+    "sequence": [
+      "skill_files",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {
+      "command": "dir"
+    },
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771467845373_5",
+    "description": "Automated sequence following: \"what is SENTRA?\"",
+    "trigger_sample": "what is SENTRA?",
+    "sequence": [
+      "learned_1771377385081",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 1
+  },
+  {
+    "draftID": "draft_1771467845373_6",
+    "description": "Automated sequence following: \"Hey!\"",
+    "trigger_sample": "Hey!",
+    "sequence": [
+      "meta_feedback_positive",
       "meta_feedback_positive"
     ],
     "params_sample": {},
     "reward_score": 0.75
   },
   {
-    "draftID": "draft_1771432612980_11",
-    "description": "Automated sequence following: \"What is a dog?\"",
-    "trigger_sample": "What is a dog?",
+    "draftID": "draft_1771467845374_11",
+    "description": "Automated sequence following: \"hello\"",
+    "trigger_sample": "hello",
     "sequence": [
-      "meta_query_fact",
+      "skill_greet",
       "meta_feedback_positive"
     ],
     "params_sample": {},
     "reward_score": 0.75
   },
   {
-    "draftID": "draft_1771432612980_15",
-    "description": "Automated sequence following: \"What is a cat?\"",
-    "trigger_sample": "What is a cat?",
+    "draftID": "draft_1771476325041_3",
+    "description": "Automated sequence following: \"wrong\"",
+    "trigger_sample": "wrong",
     "sequence": [
-      "meta_query_fact",
+      "meta_feedback_negative",
       "meta_feedback_positive"
     ],
     "params_sample": {},
     "reward_score": 0.75
   },
   {
-    "draftID": "draft_1771433299045_3",
-    "description": "Automated sequence following: \"what is Sentra?\"",
-    "trigger_sample": "what is Sentra?",
+    "draftID": "draft_1771481805090_2",
+    "description": "Automated sequence following: \"good.\"",
+    "trigger_sample": "good.",
     "sequence": [
-      "meta_query_fact",
+      "meta_feedback_positive",
       "meta_feedback_positive"
     ],
     "params_sample": {},
     "reward_score": 0.75
   },
   {
-    "draftID": "draft_1771433299045_5",
-    "description": "Automated sequence following: \"What is a fish?\"",
-    "trigger_sample": "What is a fish?",
+    "draftID": "draft_1771481805091_11",
+    "description": "Automated sequence following: \"what is a cat?\"",
+    "trigger_sample": "what is a cat?",
     "sequence": [
-      "meta_query_fact",
+      "meta_explain_concept",
       "meta_feedback_positive"
     ],
     "params_sample": {},
     "reward_score": 0.75
   },
   {
-    "draftID": "draft_1771433554695_4",
-    "description": "Automated sequence following: \"Who is Bai?\"",
-    "trigger_sample": "Who is Bai?",
+    "draftID": "draft_1771482891449_2",
+    "description": "Automated sequence following: \"How are you doing??\"",
+    "trigger_sample": "How are you doing??",
     "sequence": [
-      "learned_1771371830698",
+      "learned_1771372332822",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771482891449_4",
+    "description": "Automated sequence following: \"list file\"",
+    "trigger_sample": "list file",
+    "sequence": [
+      "skill_files",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {
+      "command": "dir"
+    },
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771482891449_23",
+    "description": "Automated sequence following: \"Chicken is an animal.\"",
+    "trigger_sample": "Chicken is an animal.",
+    "sequence": [
+      "meta_learn_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771487401931_4",
+    "description": "Automated sequence following: \"Y\"",
+    "trigger_sample": "Y",
+    "sequence": [
+      "solidify_skill",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.5
+  },
+  {
+    "draftID": "draft_1771501042586_21",
+    "description": "Automated sequence following: \"Sentra!\"",
+    "trigger_sample": "Sentra!",
+    "sequence": [
+      "meta_feedback_negative",
+      "learned_bootstrap_1771373708184_201"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771501042587_40",
+    "description": "Automated sequence following: \"What is a sheep?\"",
+    "trigger_sample": "What is a sheep?",
+    "sequence": [
+      "meta_explain_concept",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771501042587_53",
+    "description": "Automated sequence following: \"What is mingming?\"",
+    "trigger_sample": "What is mingming?",
+    "sequence": [
+      "meta_explain_concept",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771501042587_57",
+    "description": "Automated sequence following: \"what is a bird?\"",
+    "trigger_sample": "what is a bird?",
+    "sequence": [
+      "meta_explain_concept",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771501042588_75",
+    "description": "Automated sequence following: \"Mars is red.\"",
+    "trigger_sample": "Mars is red.",
+    "sequence": [
+      "meta_learn_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.5
+  },
+  {
+    "draftID": "draft_1771501042588_80",
+    "description": "Automated sequence following: \"1 is a number.\"",
+    "trigger_sample": "1 is a number.",
+    "sequence": [
+      "meta_learn_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771501042588_82",
+    "description": "Automated sequence following: \"2 is a number.\"",
+    "trigger_sample": "2 is a number.",
+    "sequence": [
+      "meta_learn_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771501042589_96",
+    "description": "Automated sequence following: \"number is quantity.\"",
+    "trigger_sample": "number is quantity.",
+    "sequence": [
+      "meta_learn_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771501582527_1",
+    "description": "Automated sequence following: \"One is 1.\"",
+    "trigger_sample": "One is 1.",
+    "sequence": [
+      "meta_learn_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771501582527_4",
+    "description": "Automated sequence following: \"Two is 2.\"",
+    "trigger_sample": "Two is 2.",
+    "sequence": [
+      "meta_learn_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771501582527_9",
+    "description": "Automated sequence following: \"Three is 3.\"",
+    "trigger_sample": "Three is 3.",
+    "sequence": [
+      "meta_learn_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771501765771_4",
+    "description": "Automated sequence following: \"Five is 5.\"",
+    "trigger_sample": "Five is 5.",
+    "sequence": [
+      "meta_learn_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771501765771_15",
+    "description": "Automated sequence following: \"Eight is 8.\"",
+    "trigger_sample": "Eight is 8.",
+    "sequence": [
+      "meta_learn_fact",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771509055598_3",
+    "description": "Automated sequence following: \"Tell me about yourself.\"",
+    "trigger_sample": "Tell me about yourself.",
+    "sequence": [
+      "learned_1771372423813",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771509055598_9",
+    "description": "Automated sequence following: \"What is cat?\"",
+    "trigger_sample": "What is cat?",
+    "sequence": [
+      "meta_explain_concept",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771509055599_19",
+    "description": "Automated sequence following: \"who is sentra?\"",
+    "trigger_sample": "who is sentra?",
+    "sequence": [
+      "meta_explain_concept",
+      "meta_feedback_positive"
+    ],
+    "params_sample": {},
+    "reward_score": 0.75
+  },
+  {
+    "draftID": "draft_1771509055599_23",
+    "description": "Automated sequence following: \"what is animal?\"",
+    "trigger_sample": "what is animal?",
+    "sequence": [
+      "meta_explain_concept",
       "meta_feedback_positive"
     ],
     "params_sample": {},

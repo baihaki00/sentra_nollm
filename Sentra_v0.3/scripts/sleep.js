@@ -6,6 +6,7 @@
 
 const SemanticMemory = require('../memory_systems/semantic');
 const EpisodicMemory = require('../memory_systems/episodic');
+const ProceduralMemory = require('../memory_systems/procedural');
 const path = require('path');
 const fs = require('fs');
 
@@ -14,6 +15,7 @@ async function sleep() {
 
     const semantic = new SemanticMemory();
     const episodic = new EpisodicMemory();
+    const procedural = new ProceduralMemory();
 
     await semantic.init();
     await episodic.init();
@@ -98,15 +100,15 @@ async function sleep() {
 
         // A successful chain is: [Any Action (Rewarded >= 1.0)] -> [Positive Feedback Action]
         // Phase 21 FIX: Check for generic feedback patterns or specific action names
-        const isFeedback = current.action_taken.includes('feedback_positive') || 
-                           current.action_taken.includes('reward') ||
-                           current.action_taken.includes('bootstrap') || // Catch-all for learned praise
-                           current.action_taken.includes('feedback');
-        
+        const isFeedback = current.action_taken.includes('feedback_positive') ||
+            current.action_taken.includes('reward') ||
+            current.action_taken.includes('bootstrap') || // Catch-all for learned praise
+            current.action_taken.includes('feedback');
+
         if (previous.reward >= 1.0 && isFeedback && previous.raw_input) {
             const patternID = `draft_${Date.now()}_${i}`;
             const params = previous.action_params ? JSON.parse(previous.action_params) : {};
-            
+
             const newDraft = {
                 draftID: patternID,
                 description: `Automated sequence following: "${previous.raw_input}"`,
@@ -124,20 +126,52 @@ async function sleep() {
                 console.log(`\x1b[33m[Pattern Discovery]\x1b[0m Pattern already exists for: "${previous.raw_input}"`);
             }
         } else if (previous.reward >= 1.0 && !isFeedback) {
-             console.log(`\x1b[90m[Pattern Discovery]\x1b[0m Trigger matched high reward, but second action [${current.action_taken}] is not a recognized feedback anchor.\x1b[0m`);
+            console.log(`\x1b[90m[Pattern Discovery]\x1b[0m Trigger matched high reward, but second action [${current.action_taken}] is not a recognized feedback anchor.\x1b[0m`);
         }
     }
 
     fs.writeFileSync(draftSkillsPath, JSON.stringify(drafts, null, 2));
 
-    // 5. Mark all as consolidated or Prune
-    for (const ep of unconsolidated) {
-        if (ep.reward <= 0.3) {
-            // Hard delete mistakes to prevent "Data Wall"
-            await new Promise((resolve) => episodic.db.run("DELETE FROM episodes WHERE episode_id = ?", [ep.episode_id], resolve));
-        } else {
-            await episodic.markConsolidated(ep.episode_id);
+    // 5. Procedural Pruning (Phase 28 FIX)
+    // Identify skills that have consistently low rewards
+    console.log(`\x1b[35m[Procedural Pruning]\x1b[0m Evaluating skill performance...`);
+
+    // Skill Performance Aggregator
+    const skillStats = {}; // { skillID: { totalReward: 0, count: 0 } }
+
+    // Check all consolidated episodes (recent history)
+    const recentEpisodes = await new Promise((resolve, reject) => {
+        episodic.db.all("SELECT action_taken, reward FROM episodes WHERE timestamp > (datetime('now', '-2 days'))", [], (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+        });
+    });
+
+    for (const ep of recentEpisodes) {
+        if (!ep.action_taken.startsWith('learned_') && !ep.action_taken.startsWith('auto_')) continue;
+        const id = ep.action_taken;
+        if (!skillStats[id]) skillStats[id] = { totalReward: 0, count: 0 };
+        skillStats[id].totalReward += ep.reward;
+        skillStats[id].count++;
+    }
+
+    for (const id in skillStats) {
+        const stats = skillStats[id];
+        const avg = stats.totalReward / stats.count;
+        if (stats.count >= 3 && avg < 0.3) {
+            console.log(`\x1b[31m[Procedural Pruning]\x1b[0m Skill ${id} has failing grade (avg: ${avg.toFixed(2)}). PRUNING.`);
+            procedural.forgetSkill(id);
+        } else if (stats.count >= 2 && avg < 0.5) {
+            console.log(`\x1b[33m[Procedural Pruning]\x1b[0m Skill ${id} is underperforming (avg: ${avg.toFixed(2)}). DEMOTING.`);
+            procedural.demoteSkill(id);
         }
+    }
+
+    // 6. Mark as consolidated (Stop Hard Deleting Mistakes)
+    for (const ep of unconsolidated) {
+        // We mark as consolidated regardless of reward. 
+        // We no longer DELETE mistakes here, as we need them for WorldModel offline training during dreams.
+        await episodic.markConsolidated(ep.episode_id);
     }
 
     console.log(`\x1b[32m[Consolidation Complete]\x1b[0m memories have been processed and optimized.`);

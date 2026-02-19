@@ -1,0 +1,2406 @@
+{
+  "generated": 200,
+  "timestamp": "2026-02-18T19:31:28.807Z",
+  "results": [
+    {
+      "index": 0,
+      "input": "record this",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 6
+    },
+    {
+      "index": 1,
+      "input": "no briefly",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 85
+      },
+      "timeMs": 5
+    },
+    {
+      "index": 2,
+      "input": "that's wrong",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 3,
+      "input": "trash for me",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 56
+      },
+      "timeMs": 4
+    },
+    {
+      "index": 4,
+      "input": "check environment",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 102
+      },
+      "timeMs": 4
+    },
+    {
+      "index": 5,
+      "input": "yes",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 6,
+      "input": "what can you do",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_help",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 7,
+      "input": "please no",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 97
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 8,
+      "input": "What is loyalty?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_201",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 99
+      },
+      "timeMs": 4
+    },
+    {
+      "index": 9,
+      "input": "record this",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 4
+    },
+    {
+      "index": 10,
+      "input": "please what can you do",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_help",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 52
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 11,
+      "input": "good job for me",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 67
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 12,
+      "input": "Sentra is a digital organism. please",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371830698",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 106
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 13,
+      "input": "A cat is an animal.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371688617",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 93
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 14,
+      "input": "good job",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 15,
+      "input": "What is a proton?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 82
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 16,
+      "input": "The sun is a star.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371830698",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 98
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 17,
+      "input": "correct?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 60
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 18,
+      "input": "help",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_help",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 19,
+      "input": "good job",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 20,
+      "input": "A human is a biological organism.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 97
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 21,
+      "input": "A neutron is a particle.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 107
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 22,
+      "input": "please wrong",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 83
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 23,
+      "input": "hi",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_greet",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 24,
+      "input": "wrong",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 25,
+      "input": "Sentra is an AI. briefly",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371830698",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 105
+      },
+      "timeMs": 4
+    },
+    {
+      "index": 26,
+      "input": "please report status",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_status",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 51
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 27,
+      "input": "incorrect",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 28,
+      "input": "A philosopher is a thinker.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_reflect",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 98
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 29,
+      "input": "What is a thinker?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 97
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 30,
+      "input": "please Good morning!",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771370871967",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 78
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 31,
+      "input": "Water is a liquid. now",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 99
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 32,
+      "input": "joke",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_joke",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 33,
+      "input": "please hi Sentra",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_greet",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 90
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 34,
+      "input": "What is a biological organism? now",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 96
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 35,
+      "input": "Good morning!",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771370871967",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 53
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 36,
+      "input": "correct?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 60
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 37,
+      "input": "A proton is a particle. briefly",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371830698",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 103
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 38,
+      "input": "please What is a digital organism?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771374502732",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 103
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 39,
+      "input": "spot on for me",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 64
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 40,
+      "input": "JavaScript is a language.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_514",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 108
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 41,
+      "input": "hello again",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_greet",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 65
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 42,
+      "input": "spot on",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 43,
+      "input": "please good job",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 64
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 44,
+      "input": "A quark is a particle.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 82
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 45,
+      "input": "please good job",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 64
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 46,
+      "input": "spot on",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 47,
+      "input": "hello",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_greet",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 48,
+      "input": "please record this",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 57
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 49,
+      "input": "A virtue is a quality. long version",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 98
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 50,
+      "input": "excellent",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 51,
+      "input": "good job",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 52,
+      "input": "Good morning!",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771370871967",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 53
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 53,
+      "input": "Sentra is a digital organism.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_98",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 104
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 54,
+      "input": "exit",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_440",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 55,
+      "input": "A thinker is a human.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_reflect",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 95
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 56,
+      "input": "no",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 57,
+      "input": "check files please",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 53
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 58,
+      "input": "joke in detail",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_joke",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 66
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 59,
+      "input": "please What is a biological organism?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 103
+      },
+      "timeMs": 4
+    },
+    {
+      "index": 60,
+      "input": "record this",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 61,
+      "input": "good job",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 62,
+      "input": "check files short",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 65
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 63,
+      "input": "how are you? for me",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771372332822",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 76
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 64,
+      "input": "spot on",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 65,
+      "input": "please well done",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_201",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 61
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 66,
+      "input": "reflect",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_reflect",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 67,
+      "input": "excellent?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 52
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 68,
+      "input": "Sentra is an AI. now",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371830698",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 104
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 69,
+      "input": "record this long version",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 64
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 70,
+      "input": "what do you do?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_help",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 69
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 71,
+      "input": "check files",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 72,
+      "input": "check files?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 52
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 73,
+      "input": "Sentra is a Bai's creation.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371810297",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 99
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 74,
+      "input": "check files",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 75,
+      "input": "A quark is a particle.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 82
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 76,
+      "input": "tell me a joke long version",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_joke",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 59
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 77,
+      "input": "Sentra is an AI.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371830698",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 108
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 78,
+      "input": "A neutron is a particle. long version",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_status",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 104
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 79,
+      "input": "A neutron is a particle.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 107
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 80,
+      "input": "exit short",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_440",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 53
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 81,
+      "input": "please who are you?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_741",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 51
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 82,
+      "input": "good job?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 58
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 83,
+      "input": "please What is a biological organism?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 103
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 84,
+      "input": "please status",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_status",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 74
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 85,
+      "input": "hi?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_greet",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 79
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 86,
+      "input": "A neutron is a particle.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 107
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 87,
+      "input": "check files",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 88,
+      "input": "ponder",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_reflect",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 89,
+      "input": "help?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_help",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 78
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 90,
+      "input": "Good morning!?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771370871967",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 75
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 91,
+      "input": "status long version",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_status",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 79
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 92,
+      "input": "who are you?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_741",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 93,
+      "input": "status in detail",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_status",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 61
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 94,
+      "input": "no",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 95,
+      "input": "An airplane is a vehicle.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771374774944",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 105
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 96,
+      "input": "nice work",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_201",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 97,
+      "input": "please take a note",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 66
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 98,
+      "input": "What is loyalty?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_201",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 99
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 99,
+      "input": "check files",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 100,
+      "input": "What is an airplane?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371688617",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 81
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 101,
+      "input": "spot on",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 102,
+      "input": "Good morning!",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771370871967",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 53
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 103,
+      "input": "What is an electron??",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371830698",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 98
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 104,
+      "input": "Good morning?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771370871967",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 75
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 105,
+      "input": "please well done",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_201",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 61
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 106,
+      "input": "Sentra is a philosopher.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_98",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 106
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 107,
+      "input": "yes?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 89
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 108,
+      "input": "check files now",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 45
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 109,
+      "input": "please tell me a joke",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_joke",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 47
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 110,
+      "input": "take a note",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 111,
+      "input": "What is a digital organism?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 100
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 112,
+      "input": "reflect",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_reflect",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 113,
+      "input": "report status",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_status",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 114,
+      "input": "record this",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 115,
+      "input": "please hi Sentra",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_greet",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 90
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 116,
+      "input": "record this?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 46
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 117,
+      "input": "correct",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 118,
+      "input": "excellent",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 119,
+      "input": "help",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_help",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 120,
+      "input": "nice work?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_201",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 45
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 121,
+      "input": "What is an electron?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371830698",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 88
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 122,
+      "input": "please check files",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 52
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 123,
+      "input": "spot on short",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 65
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 124,
+      "input": "incorrect",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 125,
+      "input": "please check files",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 52
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 126,
+      "input": "please no",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 97
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 127,
+      "input": "What is a thinker??",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 84
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 128,
+      "input": "A proton is a particle.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 100
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 129,
+      "input": "yes",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 130,
+      "input": "hello?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_greet",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 61
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 131,
+      "input": "no",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 132,
+      "input": "Python is a language.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 105
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 133,
+      "input": "Sentra is a Bai's creation.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371810297",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 99
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 134,
+      "input": "report status",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_status",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 135,
+      "input": "What is a virtue?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 82
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 136,
+      "input": "hi",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_greet",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 137,
+      "input": "joke",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_joke",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 138,
+      "input": "ponder",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_reflect",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 139,
+      "input": "correct",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 140,
+      "input": "hey?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_greet",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 76
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 141,
+      "input": "report status",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_status",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 142,
+      "input": "Water is a liquid.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371810297",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 97
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 143,
+      "input": "incorrect",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 144,
+      "input": "Sentra is an AI.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371830698",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 108
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 145,
+      "input": "spot on",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 146,
+      "input": "JavaScript is a language.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_514",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 108
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 147,
+      "input": "A thinker is a human.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_reflect",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 95
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 148,
+      "input": "What is a cat?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 77
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 149,
+      "input": "please A philosopher is a thinker.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_reflect",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 100
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 150,
+      "input": "think",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_reflect",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 151,
+      "input": "A virtue is a quality. short",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 90
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 152,
+      "input": "check files for me",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 54
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 153,
+      "input": "Sentra is a philosopher.?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 112
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 154,
+      "input": "check files",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 155,
+      "input": "check files",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 156,
+      "input": "record this",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 157,
+      "input": "what do you do? briefly",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_help",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 84
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 158,
+      "input": "please correct",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 68
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 159,
+      "input": "good job briefly",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 52
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 160,
+      "input": "Loyalty is a virtue.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 98
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 161,
+      "input": "check environment in detail",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 102
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 162,
+      "input": "think",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_reflect",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 163,
+      "input": "well done",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_201",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 164,
+      "input": "no",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 165,
+      "input": "please Good morning",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771370871967",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 89
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 166,
+      "input": "A virtue is a quality.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 82
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 167,
+      "input": "tell me a joke",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_joke",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 168,
+      "input": "check files",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 169,
+      "input": "hi",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_greet",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 170,
+      "input": "An airplane is a vehicle. for me",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 94
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 171,
+      "input": "incorrect",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 172,
+      "input": "exit",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_440",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 173,
+      "input": "check files short",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 65
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 174,
+      "input": "record this",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 175,
+      "input": "exit",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_bootstrap_1771373708184_440",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 176,
+      "input": "What is a thinker?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 97
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 177,
+      "input": "A human is a biological organism.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 97
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 178,
+      "input": "help",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_help",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 179,
+      "input": "spot on",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 180,
+      "input": "correct",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 181,
+      "input": "trash",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 182,
+      "input": "wrong",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 183,
+      "input": "list current directory",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 184,
+      "input": "joke",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_joke",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 185,
+      "input": "what do you do?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_help",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 69
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 186,
+      "input": "take a note",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 187,
+      "input": "good job",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 188,
+      "input": "Water is a liquid.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371810297",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 97
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 189,
+      "input": "spot on",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_positive",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 190,
+      "input": "please What is Sentra?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771377385081",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 98
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 191,
+      "input": "help?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_help",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 78
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 192,
+      "input": "no",
+      "method": "multi_intent",
+      "selected": {
+        "id": "meta_feedback_negative",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 193,
+      "input": "check files",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 194,
+      "input": "check files",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_files",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 2
+    },
+    {
+      "index": 195,
+      "input": "record this",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_note",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 0
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 196,
+      "input": "joke briefly",
+      "method": "multi_intent",
+      "selected": {
+        "id": "skill_joke",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 72
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 197,
+      "input": "Fire is hot.",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371830698",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 101
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 198,
+      "input": "What is loyalty? in detail",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771371688617",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 103
+      },
+      "timeMs": 3
+    },
+    {
+      "index": 199,
+      "input": "Good morning!?",
+      "method": "multi_intent",
+      "selected": {
+        "id": "learned_1771370871967",
+        "score": 0,
+        "candidateIndex": 0,
+        "dist": 75
+      },
+      "timeMs": 3
+    }
+  ]
+}

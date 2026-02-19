@@ -29,9 +29,12 @@ class OutputBus {
     // --- Primitives ---
 
     async logOutput(params) {
-        // ANSI Color Code for Green: \x1b[32m
-        // Reset: \x1b[0m
-        console.log(`\x1b[32m[Sentra]: ${params.message}\x1b[0m`);
+        // Phase 28: Capture output in the global trace for SBI/Diagnostics
+        if (typeof global.trace === 'function') {
+            global.trace('OUTPUT', params.message, '\x1b[32m');
+        } else {
+            console.log(`\x1b[32m[Sentra]: ${params.message}\x1b[0m`);
+        }
     }
 
     async wait(params) {
